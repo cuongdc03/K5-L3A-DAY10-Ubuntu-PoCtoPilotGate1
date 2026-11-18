@@ -254,13 +254,15 @@ Bốn lăng kính (bắt buộc đủ cả bốn; dự án AI hay chết ở ba 
 | **Con người và vận hành** | Ai duyệt, mấy người, mỗi giờ được mấy ca? Lượng việc tăng gấp ba thì sao? Nhân viên có tin trợ lý không? |
 | **Pháp lý** | Dữ liệu cá nhân của ai rời hệ thống? Bên thứ ba nào bị ghi lỗi, bị trừ tiền mà không được hỏi? |
 
+*Ghi chú: bảng này được hoàn thiện sau, từ HAZOP vòng 1 (mục B4), các cổng đã dựng ở B7 và số của lần chạy base; không phải bản viết tay lúc 14:35.*
+
 | Lý do thất bại (viết ở thì quá khứ) | Lăng kính | Kiểm được hôm nay? (trace / data / config nào) | Thành cổng phòng ngừa nào (code hay config) / hay vào risk register |
 |---|---|---|---|
-| | Kỹ thuật | | |
-| | Kinh doanh | | |
-| | Con người và vận hành | | |
-| | Pháp lý | | |
-| | | | |
+| Trợ lý hoàn tiền và ghi lỗi hãng theo số ngày khách khai hoặc kiện sai thay vì theo tracking, nên hoàn sai và hãng bị phạt oan | Kỹ thuật | Trace `T-002@55` (base: hoàn sai 20.000đ, 1 lỗi hãng oan); `tracking` và `proposal` trong trace | **Cổng code** trong `write_gate`: kiểm ghi hoàn và ghi lỗi hãng theo tracking và chính sách hiệu lực (B7.1) |
+| Tự động hoá lỗ ở nhóm ticket không xác định được kho, và tổng hoàn trong ngày vượt ngân sách Finance | Kinh doanh | Report base: kho `?` 10.359đ/ticket cao hơn làm tay; `ops_limits.daily_auto_refund_budget_vnd` = 2.000.000đ | **Cổng config**: `business.daily_refund_cap_vnd` = 2.000.000, `pilot_scope` chỉ HN và HCM (B7.4) |
+| Một người duyệt bị ngập khi ticket tăng gấp ba, ca chờ quá 60 phút, nhân viên không tin trợ lý | Con người và vận hành | Khối "kinh doanh và vận hành" của report (chờ lâu nhất, ca ùn); `staff_behavior` trong `world.json` | **Cổng config**: `operations.reviewers_on_shift` = 1, `review_capacity_per_hour` = 6, `max_queue_wait_minutes` = 60; ngưỡng gọi thêm người trong runbook (B7.5, B7.6) |
+| Dữ liệu cá nhân của người nhận (tên, điện thoại, nguyên văn khách gõ) bị gửi cho hãng; hãng nhỏ bị ghi lỗi oan mà không được hỏi | Pháp lý | Trace `notify_carrier` có khóa `recipient_contact` và `customer_note` trong `payload`; `pii_leaks` trong report | **Cổng config**: `legal.pii_fields_blocked_to_third_party` và `carrier_fault_requires_recorded_cause` = true (B7.5) |
+| Hãng nhỏ bị ghi lỗi liên tiếp trong một ngày vượt hạn mức đã thống nhất với Ops (2 lỗi/hãng/ngày) | Vận hành, pháp lý | `ops_limits.max_auto_strikes_per_carrier_per_day`; `data/world.json` → `carriers` | **Risk register** (Phiếu C mục C10); thành cổng code ở vòng 2 |
 
 ---
 

@@ -6,12 +6,12 @@
     "TrinhCongDuc-2A202603527",
     "NguyenMinhDat-2A202603582"
   ],
-  "incident": "",
-  "decision_v1": "",
-  "decision_v2": "",
+  "incident": "S6",
+  "decision_v1": "Tiếp tục",
+  "decision_v2": "Tiếp tục",
   "three_lines": {
-    "environment_assumption": "",
-    "reduce_or_prevent": "",
-    "measure_in_pilot": ""
+    "environment_assumption": "tracking luôn nối đúng `parcel_id` với `carrier_id`, `driver_id` và nguyên nhân trễ, và hãng nhỏ cập nhật kịp thời; dữ liệu thật có thể thiếu, trễ hoặc mơ hồ.",
+    "reduce_or_prevent": "Gate NGĂN được các nhánh đã biết, vì ghi lỗi và hoàn tiền đều kiểm theo tracking, chuyển người khi hai kiện cùng trễ và có trần 2 lỗi/hãng/ngày (S6 after 0 hoàn sai, 0 lỗi hãng oan trên 40 lượt), nhưng chỉ GIẢM với nhánh chưa biết như tracking sai hoặc thiếu, nên vẫn giữ người duyệt ở bước cuối.",
+    "measure_in_pilot": "đối soát mẫu từng quyết định với tracking và biên bản cấp kiện để đo lỗi quy hãng, tài xế và hoàn sai; đo tỉ lệ chuyển người (0,25 trên mock), ROI, chi phí mỗi ticket, độ phủ và hàng chờ theo từng kho; và đo khiếu nại của hãng nhỏ như GHSH."
   }
 }
