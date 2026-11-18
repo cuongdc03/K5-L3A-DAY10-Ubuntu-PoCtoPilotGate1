@@ -26,7 +26,7 @@ Ghi `members` trong `submission/submission.json` theo dạng `"HoVaTen-MSSV"`, k
 
 | Mã  | Vai                                   | Người        | File / phiếu chính                                                                          |
 | --- | ------------------------------------- | ------------ | ------------------------------------------------------------------------------------------- |
-| A   | Kỹ sư cổng #1 (viết code)             | Đạt          | `lab10/guards.py` (`pre_guard`, `write_gate`)                                               |
+| A   | Kỹ sư cổng #1 (viết code)             | Nguyễn Minh Đạt | `lab10/guards.py` (`pre_guard`, `write_gate`)                                               |
 | B   | Kỹ sư cổng #2 (đo và kiểm)            | Kiệt         | `lab10/monitors.py`; chạy `eval`, `gate`, `trace`, `grade`                                  |
 | C   | Sản phẩm và kinh doanh                | Đức          | `config/acceptance_criteria.json`; `operating_gates.json` mục `business`; Phiếu A           |
 | D   | Vận hành và pháp lý (**trưởng nhóm**) | Đỗ Cao Cường | `operating_gates.json` mục `operations`, `legal`; `submission/submission.json`; repo và git |
@@ -156,7 +156,7 @@ Vai A – Kỹ sư cổng #1. Phụ trách `lab10/guards.py`, câu 2.6 (B7.1) c�
 
 - **Vòng 1:** Viết ba cổng để chặn ghi hoàn trùng, kiểm tra căn cứ ghi lỗi hãng và tính lại quyền lợi hoàn tiền từ tracking theo chính sách hiệu lực. Ghi mô tả và kết quả kiểm thử vào B7.1.
 - **Vòng 2 – S6:** Sửa `write_gate` để ghi lỗi đúng kiện, hãng và tài xế theo tracking. Chuyển người duyệt trước khi hoàn tiền nếu nhiều kiện trễ mà ticket thiếu mã kiện, và chuyển duyệt khi hãng đã chạm trần ghi lỗi tự động trong ngày. Điền cây lỗi trước sửa, bảng biện pháp và cây lỗi sau sửa ở C6, C7, C9.
-- **Sử dụng AI:** Dùng ChatGPT để đọc repo, hỗ trợ viết code cổng, giải thích kết quả. Tôi trực tiếp chạy các lệnh kiểm thử và đánh giá.
+- **Sử dụng AI:** Dùng ChatGPT để đọc repo, hỗ trợ viết code cổng, cập nhật phiếu và giải thích kết quả. Tôi trực tiếp chạy các lệnh kiểm thử và đánh giá.
 
 ### Bằng chứng
 
@@ -165,4 +165,4 @@ Vai A – Kỹ sư cổng #1. Phụ trách `lab10/guards.py`, câu 2.6 (B7.1) c�
 
 ### Exit ticket
 
-Học được rằng ticket thiếu mã kiện cần được chuyển duyệt trước khi ghi hoàn tiền. Muốn kiểm tra cách hệ thống áp dụng trần ghi lỗi khi nhiều tiến trình cùng ghi cho một hãng.
+Tôi học được rằng ticket thiếu mã kiện cần được chuyển duyệt trước khi ghi hoàn tiền. Tôi còn muốn kiểm tra cách hệ thống áp dụng trần ghi lỗi khi nhiều tiến trình cùng ghi cho một hãng.
