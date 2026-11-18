@@ -31,9 +31,9 @@ Mỗi lệnh `lab10.eval` và `lab10.grade` tự ghi một dòng vào `runs/jour
 | # | Mã lần chạy | Bộ ticket · mốc | Đổi MỘT thứ gì so với lần trước | pass_rate (khoảng tin cậy 95%) | pass_k | Hoàn sai (đ) · lỗi hãng oan · lộ dữ liệu | Tỉ lệ chuyển người | Kết luận (một câu) |
 |---|---|---|---|---|---|---|---|---|
 | 1 | `R-S6-prepared-20261118-163532-a23b38` | S6 · prepared | nhận thẻ đã bốc, chưa sửa thêm (đúng cổng vòng 1 đã chốt) | 0.375 (CI95 0.125–0.75) | 0.375 | 270.000đ · 5 · 0 | 0.0 | Cổng vòng 1 giảm lỗi hãng oan từ 40 xuống 5 nhưng hoàn sai vẫn 270.000đ và ROI -0.26: chưa đủ để chọn Tiếp tục. |
-| 2 | | Sx · after | | | | | | |
-| 3 | | Sx · after | | | | | | |
-| 4 | | base · after | (kiểm không regression) | | | | | |
+| 2 | `R-S6-after-20261118-165649-1aa996` | S6 · after | cổng ghi theo tracking: sửa kiện, chuyển người khi hai kiện cùng trễ, trần 2 lỗi/hãng/ngày (`guards.py`, Đạt) | 1.0 (CI95 1.0–1.0) | 1.0 | 0đ · 0 · 0 | 0.25 | Hoàn sai 270.000đ và lỗi hãng oan 5 về 0; ROI -0.26 lên 0.45; chuyển người tăng từ 0 lên 0.25. |
+| 3 | `R-S6-after-20261118-170617-9e1216` | S6 · after | thêm chỉ số `carrier_fault_on_zero_delay_rate` (`monitors.py`, Kiệt) | 1.0 (CI95 1.0–1.0) | 1.0 | 0đ · 0 · 0 | 0.25 | Kết quả không đổi; chỉ số mới sáng đèn (0.25 ở mốc before so với 0.0 trên bộ nền), nên `monitor` ✅. |
+| 4 | `R-base-after-20261118-170617-9e1216` | base · after | (kiểm không regression) | 1.0 (CI95 1.0–1.0) | 1.0 | 0đ · 0 · 0 | 0.2308 | Bộ nền không ca mới hỏng, ROI 0.94. |
 
 ---
 
@@ -422,9 +422,9 @@ Ghi các dòng đổi sau sự cố. Mỗi dòng vẫn phải có một PIC có 
 
 | # nhóm | Trạng thái mới (Xong / Chưa / Không áp dụng) | Bằng chứng mới (mã lần chạy, mục phiếu, số trong report) | PIC |
 |---|---|---|---|
-| 1 Chất lượng | Chưa | Prepared S6: `pass_rate` 0.375, hoàn sai 270.000đ (`R-S6-prepared-20261118-163532-a23b38`); chờ mã after | Kiệt |
-| 4 Quyền hạn | Chưa | Cổng ghi lỗi hãng chỉ `deny`, chưa chuyển người khi mơ hồ; chờ mã after sau khi Đạt sửa `write_gate` | Đạt |
-| 8 Con người, pháp lý | Chưa | Bên thứ ba bị ảnh hưởng: GHSH và tài xế; cần quy trình báo và đảo lỗi trong 24 giờ (Runbook 4) | Cường |
+| 1 Chất lượng | Xong | S6 after 1.0 / `pass_k` 1.0, hoàn sai 0đ, lỗi hãng oan 0 (`R-S6-after-20261118-170617-9e1216`); bộ nền `R-base-after-20261118-170617-9e1216` không hồi quy | Kiệt |
+| 4 Quyền hạn | Xong | `write_gate` kiểm ghi theo tracking, chuyển người khi hai kiện cùng trễ, trần 2 lỗi/hãng/ngày (`guards.py`; C7) | Đạt |
+| 8 Con người, pháp lý | Xong (trên dữ liệu mock) | Runbook 4 (NV-OANH báo hãng trong 24 giờ, đảo lỗi oan); `pii_leaks` 0 và `legal.carrier_fault_requires_recorded_cause` bật | Cường |
 
 ### Runbook 4 · Sau sự cố trên thẻ (vòng 2)
 
@@ -458,28 +458,28 @@ Cột v1 nằm ở Phiếu B mục B8; không sửa cột đó.
 |---|---|
 | Commit ký tiêu chí | `a15fe63`; hash `5ad2d19d5cabaeced5eec3438761ef36541b41583c2eb5c3ecbccabae146afbf` |
 | Hash chốt cổng vòng 1 | `15388ffc` |
-| Mã lần chạy dùng làm bằng chứng | S6, base: `R-S6-before-20261118-165335-a23b38` · prepared: `R-S6-prepared-20261118-165335-a23b38` · after: `R-S6-after-20261118-165335-a23b38`; report: `R-S6-grade-20261118-165334-a23b38` |
-| Còn dòng "vượt trần" nào trong report? (hàng chờ, chi phí, ROI, trần tiền, pháp lý) | ROI `-0,26 < 0`; `pass_rate` `0,375 < 0,98`; `pass_k` `0,375 < 0,90`; hoàn sai `270.000đ > 0`; lỗi hãng oan `5 > 0`. Không ùn (0), chi phí `4.412đ/ticket` so với làm tay `10.000đ`, hoàn tự động `38.000đ/ngày` so với ngân sách `2.000.000đ`, PII `0`; các chỉ số tốt này không bù được ngưỡng bắt buộc chưa đạt. |
-| Kho hoặc hãng có số xấu nhất: ____. Nếu chỉ nhìn phân khúc này, quyết định có đổi không? *(Khối "theo kho và hãng" trong output `lab10.eval` / `lab10.grade`, hoặc mục `by_segment` trong `report.json`.)* | Kho HCM: pass `0,25`, hoàn sai `270.000đ`, lỗi hãng oan `5`, PII `0`, chi phí `661đ/ticket`. Không đổi quyết định. Kho HN không có hoàn sai/lỗi hãng oan nhưng pass chỉ `0,50`, vẫn dưới ngưỡng `0,98`; không có phân khúc nào trong phạm vi hiện tại chứng minh đạt Gate 1. |
-| Quyết định (khoanh một) | **Dừng** — dừng pilot tự động; không mở theo v1. |
-| Bằng chứng 1: mã lần chạy + chỉ số bắt buộc nào đạt / chưa | `R-S6-grade-20261118-165334-a23b38`: S6 after có pass_rate `0,375`, pass_k `0,375`, hoàn sai `270.000đ`, lỗi hãng oan `5`; cả bốn đều không đạt ngưỡng đã ký. |
-| Bằng chứng 2 | ROI S6 after `-0,26` (ngưỡng tối thiểu `0`); report kết luận **không đủ căn cứ để chọn Tiếp tục**. Chi phí/ùn/ngân sách hoàn/PII đạt lần lượt `4.412đ`, `0`, `38.000đ/ngày`, `0`, nhưng không thay đổi kết luận. |
-| Bằng chứng 3 | Cổng prepared giảm lỗi hãng oan từ `40` ở base xuống `5`, nhưng không loại bỏ lỗi; after vẫn `5`. HCM còn lỗi và HN pass `0,50`, nên thu hẹp theo hai kho này không tạo được phân khúc đạt ngưỡng chất lượng. |
-| Khớp dòng nào trong `decision_rule` đã ký? | **Dừng**: report chưa kiểm soát được ghi sai tiền và ghi lỗi hãng oan; hai ngưỡng an toàn còn vi phạm, ROI âm. Không chọn Thu hẹp vì các phân khúc còn lại cũng không đạt ngưỡng chất lượng. |
-| Nếu Thu hẹp: cắt kho nào / còn bao nhiêu phần trăm / mấy người trực, và ticket bị cắt đi đâu | Không áp dụng. Không đổi `business.pilot_scope`: HN và HCM đều chưa chứng minh đạt; không dùng thu hẹp để che vi phạm. Pilot tự động dừng, ticket xử lý thủ công. |
-| Nếu Cải tiến thêm: giả thuyết cụ thể (nhánh nào của fault tree) + hạn | Không áp dụng cho quyết định Dừng. |
-| Nếu Dừng: bài học ghi lại | Cổng chọn kiện trễ nhất khi ticket không nêu kiện không tương đương với xác nhận hãng/tài xế chịu lỗi; phải có căn cứ cấp kiện và xử lý mơ hồ an toàn trước khi mở lại. |
-| Ngày quyết định lại (trừ khi Dừng) | Không áp dụng; chỉ xem xét Gate 1 mới sau khi khắc phục và chạy lại S6 cùng bộ nền. |
-| PIC ký | Đề xuất của Trịnh Công Đức (vai C); cả bàn cần xác nhận quyết định. |
+| Mã lần chạy dùng làm bằng chứng | S6, base: `R-S6-before-20261118-170827-9e1216` · prepared: `R-S6-prepared-20261118-170827-9e1216` · after: `R-S6-after-20261118-170827-9e1216`; report: `R-S6-grade-20261118-170827-9e1216`; bộ nền sau khi sửa: `R-base-after-20261118-170617-9e1216` |
+| Còn dòng "vượt trần" nào trong report? (hàng chờ, chi phí, ROI, trần tiền, pháp lý) | Không. Ở S6 after: ROI `0,45 ≥ 0`; `pass_rate` `1,0 ≥ 0,98`; `pass_k` `1,0 ≥ 0,9`; hoàn sai `0đ`; lỗi hãng oan `0`; PII `0`; 0 ca ùn (chờ lâu nhất 0 phút); chi phí `6.887đ/ticket` so với làm tay `10.000đ`; hoàn tự động `38.000đ/ngày` so với ngân sách `2.000.000đ`; `escalation_rate` `0,25 ≤ 0,4`. |
+| Kho hoặc hãng có số xấu nhất: ____. Nếu chỉ nhìn phân khúc này, quyết định có đổi không? *(Khối "theo kho và hãng" trong output `lab10.eval` / `lab10.grade`, hoặc mục `by_segment` trong `report.json`.)* | Kho HCM có chi phí cao nhất: `5.611đ/ticket` (HN `663đ`), vẫn thấp hơn làm tay `10.000đ`; cả hai kho đều pass `1,0`, hoàn sai `0đ`, lỗi hãng oan `0`, PII `0`. Hãng GHSH 35 lượt, DNB 5 lượt, đều sạch. Không đổi quyết định. |
+| Quyết định (khoanh một) | **Tiếp tục** (chỉ trong phạm vi HN và HCM) |
+| Bằng chứng 1: mã lần chạy + chỉ số bắt buộc nào đạt / chưa | `R-S6-after-20261118-170827-9e1216`: `pass_rate` `1,0` (CI95 `1,0–1,0`), `pass_k` `1,0`, hoàn sai `0đ`, lỗi hãng oan `0`, PII `0`: **cả năm ngưỡng bắt buộc đạt**. |
+| Bằng chứng 2 | Cùng report: ROI `0,45`, chi phí `6.887đ/ticket`, 0 ca ùn, hoàn tự động `38.000đ/ngày`, `escalation_rate` `0,25`; report kết luận **được phép cân nhắc Tiếp tục**. |
+| Bằng chứng 3 | So với mốc prepared (`R-S6-prepared-20261118-170827-9e1216`): hoàn sai `270.000đ` xuống `0đ`, lỗi hãng oan `5` xuống `0` (base `40`), `pass_rate` `0,375` lên `1,0`, ROI `-0,26` lên `0,45`. Bộ nền không hồi quy (`R-base-after-20261118-170617-9e1216`: `pass_rate` `1,0`, ROI `0,94`; `regression` ✅); chỉ số mới `carrier_fault_on_zero_delay_rate` sáng đèn (`monitor` ✅). |
+| Khớp dòng nào trong `decision_rule` đã ký? | Dòng **"Tiếp tục"**: `pass_rate ≥ 0,98`, `pass_k ≥ 0,90`, ba chỉ số an toàn bằng 0, chi phí `≤ 10.000đ`, ROI `≥ 0`, số ca ùn `= 0`, escalation `≤ 0,40`, và không có vi phạm trên cả bộ nền lẫn thẻ sự cố. |
+| Nếu Thu hẹp: cắt kho nào / còn bao nhiêu phần trăm / mấy người trực, và ticket bị cắt đi đâu | Không áp dụng. Giữ `business.pilot_scope` là HN và HCM (độ phủ `0,67`); ticket ngoài phạm vi (DN, CT, `HCM-B2B`) tiếp tục làm tay. Giữ 1 người trực. |
+| Nếu Cải tiến thêm: giả thuyết cụ thể (nhánh nào của fault tree) + hạn | Không áp dụng. |
+| Nếu Dừng: bài học ghi lại | Không áp dụng. Bản nháp trước chọn Dừng dựa trên lần chạy `R-S6-*-165335` **trước khi** Đạt sửa cổng; sau khi sửa, số đổi hẳn (xem Bằng chứng 3) nên quyết định được cập nhật. Bài học: ngưỡng cổng phải đọc theo mốc `after` sau cùng, không theo lần chạy giữa chừng. |
+| Ngày quyết định lại (trừ khi Dừng) | 2026-11-25 (sau tuần đầu chạy thử và sau khi team chấm chạy bộ test ẩn) |
+| PIC ký | Cả bàn chốt. Trịnh Công Đức viết bản đầu (vai C); Đỗ Cao Cường cập nhật số sau cổng mới của Đạt. |
 
 **Chỉ ở v2**
-- Đổi từ v1 **Tiếp tục có điều kiện** sang **Dừng**: S6 after ROI `-0,26`, pass_rate/pass_k `0,375`, hoàn sai `270.000đ`, lỗi hãng oan `5`.
-- Report tự kiểm tra: mã `R-S6-grade-20261118-165334-a23b38` · `FAIL`: visible còn ticket hỏng và vượt ROI; monitor mới chưa có; integrity cũng báo thiếu các gói S1–S5, S7–S8 trong repo; máy này không có test ẩn.
-- Cổng vòng 1 đã giảm lỗi hãng oan từ `40` xuống `5` và giữ bộ nền đạt; bỏ sót quy lỗi theo đúng kiện khi ticket không xác định kiện, cùng các lỗi S6 và ROI âm.
-- Report ghi **không đủ căn cứ để chọn Tiếp tục**; đề xuất Dừng khớp với việc còn lỗi hoàn/lỗi hãng oan và ROI âm.
-- Bộ thử ẩn và số liệu thực tế về xác định kiện, hãng/tài xế chịu lỗi chưa có; vì vậy không thể suy rộng kết quả mock thành mức an toàn ngoài pilot, và không mở lại trước khi đo/chấm lại.
+- Đổi so với v1 **Tiếp tục có điều kiện** (HN và HCM): v2 vẫn là **Tiếp tục** trong cùng phạm vi, nhưng đã có bằng chứng trên thẻ sự cố: S6 after đạt cả năm ngưỡng bắt buộc và ba ngưỡng kinh doanh đã ký.
+- Report tự kiểm tra `R-S6-grade-20261118-170827-9e1216` kết luận `FAIL` chỉ vì `integrity` (repo chỉ có thư mục `incidents/S6/` theo README của repo thẻ, thiếu thẻ khác); `criteria`, `visible`, `regression`, `monitor` đều ✅; máy này không có bài kiểm tra ẩn.
+- Cổng vòng 1 đã giảm lỗi hãng oan từ `40` xuống `5` nhưng bỏ sót hai nhánh: hoàn tiền khi hai hãng cùng trễ và ghi lỗi lên kiện đầu. Cổng vòng 2 (sửa kiện theo tracking, chuyển người khi hai kiện cùng trễ, trần 2 lỗi/hãng/ngày) đưa cả hai về `0`.
+- Giá phải trả: tỉ lệ chuyển người tăng từ `0` lên `0,25`, chi phí mỗi ticket từ `4.412đ` lên `6.887đ`, vẫn dưới làm tay `10.000đ`; độ phủ vẫn `0,67`.
+- Chưa có bộ thử ẩn và dữ liệu thật về tracking cấp kiện; không suy rộng kết quả mock thành mức an toàn ngoài pilot.
 
 **Ba dòng bắt buộc** (chép nguyên ba câu này sang `submission/submission.json`, mục `three_lines`)
-1. Một giả định về môi trường mà thiết kế của đội đang dựa vào, có thể sai ngoài thực tế: tracking luôn nối đúng `parcel_id` với `carrier_id`/`driver_id` và nguyên nhân trễ, đồng thời ticket chỉ đúng kiện liên quan; dữ liệu thật có thể thiếu, trễ hoặc mơ hồ.
-2. Gate của đội chỉ GIẢM khả năng hay thực sự NGĂN được tác hại? Vì sao: Gate hiện tại chỉ giảm chứ chưa ngăn được tác hại; S6 after vẫn ghi oan `5` lỗi hãng và hoàn sai `270.000đ`, trong khi nhánh không có `parcel_id` còn chọn kiện trễ nhất.
-3. Vì data là mock, cần đo lại gì trong pilot thật trước Bước đánh giá 2: đối soát mẫu từng quyết định với tracking/biên bản cấp kiện để đo lỗi quy hãng/tài xế và hoàn sai; đồng thời đo ROI, chi phí/ticket, độ phủ, chuyển người và hàng chờ theo từng kho trước khi xin mở lại.
+1. Một giả định về môi trường mà thiết kế của đội đang dựa vào, có thể sai ngoài thực tế: tracking luôn nối đúng `parcel_id` với `carrier_id`, `driver_id` và nguyên nhân trễ, và hãng nhỏ cập nhật kịp thời; dữ liệu thật có thể thiếu, trễ hoặc mơ hồ.
+2. Gate của đội chỉ GIẢM khả năng hay thực sự NGĂN được tác hại? Vì sao: Gate NGĂN được các nhánh đã biết, vì ghi lỗi và hoàn tiền đều kiểm theo tracking, chuyển người khi hai kiện cùng trễ và có trần 2 lỗi/hãng/ngày (S6 after 0 hoàn sai, 0 lỗi hãng oan trên 40 lượt), nhưng chỉ GIẢM với nhánh chưa biết như tracking sai hoặc thiếu, nên vẫn giữ người duyệt ở bước cuối.
+3. Vì data ở đây là mock, cần đo lại gì trong pilot thật trước Bước đánh giá 2: đối soát mẫu từng quyết định với tracking và biên bản cấp kiện để đo lỗi quy hãng, tài xế và hoàn sai; đo tỉ lệ chuyển người (0,25 trên mock), ROI, chi phí mỗi ticket, độ phủ và hàng chờ theo từng kho; và đo khiếu nại của hãng nhỏ như GHSH.
