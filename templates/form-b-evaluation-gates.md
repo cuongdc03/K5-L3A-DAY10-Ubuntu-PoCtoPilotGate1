@@ -275,9 +275,9 @@ python3 -m unittest discover -s tests
 
 | # | Cổng (hàm và nhánh, ví dụ `write_gate` khi `tool == "issue_refund"`) | Ứng với dòng nào ở B6 / B4 | Chặn điều gì, dựa vào nguồn sự thật nào | Mã lần chạy `base · after` | Ca đang đúng nào bị hỏng? (phải là "không") |
 |---|---|---|---|---|---|
-| 1 | | | | | |
-| 2 | | | | | |
-| 3 | | | | | |
+| 1 | `write_gate` → `issue_refund` | Chờ đối chiếu B4/B6 | Chặn ghi hoàn lần hai khi sổ cái đã có khoản hoàn cho cùng ticket và đơn. | `R-base-before-20261118-150752-20976a` · `R-base-after-20261118-151055-60da30` | Không có ca mới hỏng trong 65 lượt được chạy ở cả hai mốc. 45 lượt ngoài phạm vi không được chạy lại. |
+| 2 | `write_gate` → `file_carrier_fault` | Chờ đối chiếu B4/B6 | Kiểm tra kiện, hãng, độ trễ và nguyên nhân theo tracking và chính sách hiệu lực. | `R-base-before-20261118-150752-20976a` · `R-base-after-20261118-151055-60da30` | Không có ca mới hỏng trong 65 lượt được chạy ở cả hai mốc. 45 lượt ngoài phạm vi không được chạy lại. |
+| 3 | `write_gate` → `issue_refund` | Chờ đối chiếu B4/B6 | Tính quyền lợi từ tracking và chính sách hiệu lực trước khi ghi sổ. `T-002@55` chuyển từ hoàn sai 20.000đ sang đạt. | `R-base-before-20261118-150752-20976a` · `R-base-after-20261118-151055-60da30` | Không có ca mới hỏng trong 65 lượt chung; 45 lượt ngoài phạm vi không chạy lại. |
 
 ### B7.2 · Câu 2.7 · Hai bước tránh rò rỉ dữ liệu
 
