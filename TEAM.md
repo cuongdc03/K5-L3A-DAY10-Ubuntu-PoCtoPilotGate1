@@ -16,7 +16,7 @@ Họ tên đầy đủ và MSSV của **mọi** thành viên; thêm dòng nếu 
 | 1   | Đỗ Cao Cường | 2A202603612 | D   | x           |
 | 2   | Kiệt         |             | B   |             |
 | 3   | Trịnh Công Đức| 2A202603527| C   |             |
-| 4   | Đạt          |             | A   |             |
+| 4   | Nguyễn Minh Đạt | 2A202603582 | A   |             |
 
 Ghi `members` trong `submission/submission.json` theo dạng `"HoVaTen-MSSV"`, khớp bảng trên.
 
