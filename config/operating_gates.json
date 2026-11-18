@@ -9,8 +9,8 @@
   "operations": {
     "pic": "NV-TUNG",
     "approver_id": "NV-HANH",
-    "reviewers_on_shift": 2,
-    "review_capacity_per_hour": 12,
+    "reviewers_on_shift": 1,
+    "review_capacity_per_hour": 6,
     "max_queue_wait_minutes": 60,
     "stop_conditions": [
       "Khi có 1 khoản hoàn sai thì NV-TUNG tắt issue_refund",

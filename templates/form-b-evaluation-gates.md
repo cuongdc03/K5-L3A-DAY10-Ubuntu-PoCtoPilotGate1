@@ -337,7 +337,7 @@ Phần 1–3 và mục Giờ cao điểm viết ở vòng 1. Phần 4–5 viết
 | Người giữ công tắc tắt từng thao tác ghi | `NV-TUNG`; khi vắng thì `NV-HANH` | Tắt `issue_refund`, `file_carrier_fault`, `notify_carrier`, `send_reply` trong `config/switches.json` không cần xin phép | Cùng kênh chat |
 | Người nhận khiếu nại của bên thứ ba (hãng, shop, người nhận quà) | Phạm Kiều Oanh, `NV-OANH` (kế toán đối soát) | Nhận khiếu nại của hãng và shop; đảo lại một lỗi hãng hoặc khoản hoàn đã ghi sau khi đối soát | Email hoặc điện thoại của hãng; báo `NV-TUNG` trong 24 giờ khi có khiếu nại |
 
-Số người trực duyệt mỗi ca: 2 † (`operations.reviewers_on_shift`) · Mỗi giờ duyệt được: 12 ca † (`review_capacity_per_hour`; 6 ca/giờ/người) · Phạm vi pilot: chỉ kho HN và HCM (`business.pilot_scope`, do Sản phẩm và kinh doanh chốt)
+Số người trực duyệt mỗi ca: 1 (`operations.reviewers_on_shift`; thử 2 người ở `R-base-after-20261118-154443-b0af7a` tốn hơn, ROI 0,34 so với 0,94 của 1 người ở `R-base-after-20261118-154554-a23b38`) · Mỗi giờ duyệt được: 6 ca (`review_capacity_per_hour`; 6 ca/giờ/người) · Phạm vi pilot: chỉ kho HN và HCM (`business.pilot_scope`, do Sản phẩm và kinh doanh chốt)
 
 #### Runbook 2 · Nhìn con số nào, ngưỡng nào thì làm gì
 
@@ -368,11 +368,11 @@ Lượng ticket có thể dồn gấp ba trong một giờ (ngày sale, sau bão
 
 | Câu hỏi | Trả lời (có số, có tên) |
 |---|---|
-| Giờ cao điểm là khi nào, bao nhiêu ticket mỗi giờ (dựa vào `ops_facts`)? | Ngày sale và sau bão, lượng ticket gấp ba mức thường. Một người duyệt xử lý 6 ca/giờ (10 phút/ca), nên 2 người xử lý 12 ca/giờ; 14 ca/giờ chuyển sang đã vượt năng lực † |
-| Ai trực giờ cao điểm, mấy người (khớp `operations.reviewers_on_shift`)? | `NV-HANH` cộng một nhân viên CSKH trực chờ, tổng 2 người ở ngày thường † (`reviewers_on_shift` = 2); ngày sale thêm 1 người, tổng 3 |
+| Giờ cao điểm là khi nào, bao nhiêu ticket mỗi giờ (dựa vào `ops_facts`)? | Ngày sale và sau bão, lượng ticket gấp ba mức thường. Một người duyệt xử lý 6 ca/giờ (10 phút/ca). Ngày thường chỉ khoảng 3 ca/ngày vào hàng chờ; gấp ba là khoảng 9 ca/ngày, vẫn dưới năng lực. Nhưng nếu dồn 14 ca trong một giờ thì 1 người vượt năng lực, ca cuối chờ khoảng 2 giờ |
+| Ai trực giờ cao điểm, mấy người (khớp `operations.reviewers_on_shift`)? | Ngày thường `NV-HANH` trực một mình (`reviewers_on_shift` = 1; report cho 3 ca/ngày vào hàng chờ, chờ lâu nhất 0 phút); ngày sale hoặc sau bão gọi thêm 1 người, tổng 2 |
 | Ngưỡng nào thì **gọi thêm người** (hàng chờ bao nhiêu ca, chờ lâu nhất bao nhiêu phút)? Ai gọi? | Hàng chờ ≥ 6 ca † hoặc chờ lâu nhất ≥ 30 phút (nửa SLA 60 phút). `NV-HANH` gọi |
 | Ngưỡng nào thì **thu hẹp** phạm vi (khoá `business.pilot_scope`) hoặc **tắt** một thao tác ghi (`config/switches.json`)? Ai quyết? | Chờ lâu nhất ≥ 45 phút † dù đã thêm người, hoặc có ca ùn: thu hẹp (bỏ kho đông nhất hoặc giảm `percent`). Chờ ≥ 60 phút (vỡ SLA): ca mới đi thẳng cho người. Có lỗi an toàn: tắt thao tác liên quan. `NV-TUNG` quyết |
-| Thêm người thì chi phí mỗi ticket và ROI thay đổi thế nào (đọc report)? | Mỗi người trực thêm tốn 30.000đ/ca (`reviewer_standby_fee_vnd`), cộng vào chi phí mỗi ticket; phải giữ ≤ 10.000đ và ROI ≥ 0. Chốt số người sau khi đọc report base và `after`, không thêm quá mức cần thiết † |
+| Thêm người thì chi phí mỗi ticket và ROI thay đổi thế nào (đọc report)? | Mỗi người trực thêm tốn 30.000đ/ca (`reviewer_standby_fee_vnd`). Đo thật: 2 người cho 7.473đ/ticket, ROI 0,34; 1 người cho 5.165đ/ticket, ROI 0,94. Vì vậy chỉ gọi thêm người khi chạm ngưỡng gọi thêm, không trực thừa |
 
 ---
 
