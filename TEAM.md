@@ -15,7 +15,7 @@ Họ tên đầy đủ và MSSV của **mọi** thành viên; thêm dòng nếu 
 | --: | ------------ | ----------- | --- | :---------: |
 | 1   | Đỗ Cao Cường | 2A202603612 | D   | x           |
 | 2   | Kiệt         |             | B   |             |
-| 3   | Đức          |             | C   |             |
+| 3   | Trịnh Công Đức| 2A202603527| C   |             |
 | 4   | Đạt          |             | A   |             |
 
 Ghi `members` trong `submission/submission.json` theo dạng `"HoVaTen-MSSV"`, khớp bảng trên.
@@ -98,20 +98,20 @@ Ghi `members` trong `submission/submission.json` theo dạng `"HoVaTen-MSSV"`, k
 
 Mỗi thành viên tự viết một mục bên dưới (chép mẫu, đổi tiêu đề thành họ tên không dấu và MSSV, ví dụ `## NguyenVanAn-20241234`).
 
-## HoVaTen-MSSV
+## TrinhCongDuc-2A202603527
 
 ### Phần việc phụ trách
 
-Vai trong bàn; câu nào của đề, mục nào của phiếu A/B/C, file nào (`lab10/guards.py`, `config/operating_gates.json`, …).
+Vai C — Sản phẩm và kinh doanh: Phiếu A câu 1.1, 1.6; Phiếu B câu 2.3, 2.9; Phiếu C câu 3.2, phần kinh doanh của sự cố và C12; `config/acceptance_criteria.json` và mục `business` trong `config/operating_gates.json`.
 
 ### Đóng góp cụ thể
 
-...
+Soạn mục tiêu hệ thống, đề xuất tiêu chí chấp nhận và quy tắc quyết định; lập bản đồ dữ liệu/trường nguồn sự thật, nêu ví dụ drift chính sách; đề xuất trần chi phí, ROI, ngân sách hoàn và phạm vi pilot dựa trên `data/world.json`. Các ngưỡng và phạm vi hiện là bản dự thảo để cả bàn rà soát trước khi ký.
 
 ### Bằng chứng
 
-Mã commit, mã lần chạy (`runs/<mã>`), dòng trong phiếu.
+Các phần đã điền ở Phiếu A, Phiếu B và hai config; chưa có mã lần chạy vì tiêu chí chưa ký và chưa chạy eval. Có sử dụng trợ lý AI để đọc repo, soạn bản nháp và giải thích cách làm; nhóm cần tự rà soát, thống nhất và chịu trách nhiệm về quyết định cuối.
 
 ### Exit ticket
 
-Một điều học được, một điều còn chưa chắc.
+Học được rằng phải chốt tiêu chí trước khi đo, và mỗi ngưỡng kinh doanh cần gắn với một hành động/quyết định. Còn cần kiểm chứng trong report liệu phạm vi HN/HCM, tỷ lệ chuyển người và ROI có khả thi khi tính cả chi phí vận hành hay không.
