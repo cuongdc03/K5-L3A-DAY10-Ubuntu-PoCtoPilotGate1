@@ -38,5 +38,60 @@ def pre_guard(ctx):
 
 
 def write_gate(ctx, action):
-    # action = {"tool": "issue_refund", "ticket_id":..., "order_id":..., "amount_vnd":..., "payer":..., ...}
+    if action["tool"] == "issue_refund":
+        existing = ctx.tools.ledger_rows(
+            ticket_id=action["ticket_id"],
+            order_id=action["order_id"],
+        )
+        if existing:
+            return Verdict.deny("Đã có khoản hoàn cho ticket và đơn này")
+
+        order = ctx.tools.lookup_order(action["order_id"])
+        policy = H.effective_policy(ctx.tools.lookup_policies(), ctx.as_of)
+        if not order or not order["parcels"] or policy is None:
+            return Verdict.escalate("Thiếu tracking hoặc chính sách để kiểm tra khoản hoàn")
+
+        requested_parcel = ctx.ticket.get("parcel_id")
+        if requested_parcel and not any(
+            parcel["parcel_id"] == requested_parcel for parcel in order["parcels"]
+        ):
+            return Verdict.escalate("Kiện được chỉ định không thuộc đơn hàng")
+
+        parcel = H.ticket_parcel(order, ctx.ticket, ctx.as_of)
+        delay_days = H.db_delay_days(parcel, ctx.as_of)
+        entitlement = H.entitlement_vnd(
+            policy, order, delay_days, parcel.get("delay_cause")
+        )
+        if entitlement <= 0:
+            return Verdict.deny("Tracking không đủ điều kiện hoàn tiền")
+        if action["amount_vnd"] > entitlement:
+            return Verdict.escalate("Khoản đề xuất vượt quyền lợi theo tracking")
+
+
+    if action["tool"] == "file_carrier_fault":
+        order = ctx.tools.lookup_order(action["order_id"])
+        if not order or not order["parcels"]:
+            return Verdict.deny("Không có dữ liệu kiện hàng để ghi lỗi hãng")
+
+        requested_parcel = ctx.ticket.get("parcel_id")
+        if requested_parcel and not any(
+            parcel["parcel_id"] == requested_parcel for parcel in order["parcels"]
+        ):
+            return Verdict.deny("Kiện được chỉ định không thuộc đơn hàng")
+
+        parcel = H.ticket_parcel(order, ctx.ticket, ctx.as_of)
+        if (
+            action.get("parcel_id") != parcel["parcel_id"]
+            or action.get("carrier_id") != parcel["carrier_id"]
+        ):
+            return Verdict.deny("Kiện hoặc hãng không khớp dữ liệu tracking")
+
+        policy = H.effective_policy(ctx.tools.lookup_policies(), ctx.as_of)
+        delay_days = H.db_delay_days(parcel, ctx.as_of)
+        if policy is None or not H.carrier_at_fault(policy, parcel, delay_days):
+            return Verdict.deny("Tracking và chính sách chưa đủ căn cứ ghi lỗi hãng")
+
+        if action.get("delay_days") != delay_days:
+            return Verdict.modify("Dùng độ trễ theo tracking", delay_days=delay_days)
+
     return Verdict.allow()
