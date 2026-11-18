@@ -29,7 +29,7 @@ Mọi con số trong quyết định Gate 1 phải trỏ về một dòng ở đ
 
 | # | Mã lần chạy | Bộ ticket · mốc | Đổi MỘT thứ gì so với lần trước | pass_rate (khoảng tin cậy 95%) | pass_k | Hoàn sai (đ) · lỗi hãng oan · lộ dữ liệu | Tỉ lệ chuyển người | Kết luận (một câu) |
 |---|---|---|---|---|---|---|---|---|
-| 1 | `R-base-before-20261118-153017-1bcb5f` | base · base | (baseline, chưa có cổng) | 0.9909 (CI95 0.9727–1.0) | 0.9545 | 20.000đ · 1 · 0 | 0.2273 | Baseline chỉ hỏng đúng `T-002@55` nhưng đã kịp hoàn sai 20.000đ và ghi 1 lỗi hãng oan → bắt buộc phải có cổng trước khi chốt vòng 1. |
+| 1 | `R-base-before-20261118-155717-a23b38` | base · base | (baseline, chưa có cổng) | 0.9909 (CI95 0.9727–1.0) | 0.9545 | 20.000đ · 1 · 0 | 0.2273 | Baseline chỉ hỏng đúng `T-002@55` nhưng đã kịp hoàn sai 20.000đ và ghi 1 lỗi hãng oan → bắt buộc phải có cổng trước khi chốt vòng 1. |
 | 2 | | base · after | (cổng vòng 1, thử trước khi chốt) | | | | | |
 | 3 | | base · prepared | (cổng vòng 1 đã chốt) | | | | | |
 | 4 | | | | | | | | |
@@ -45,7 +45,7 @@ python3 -m lab10.eval --suite base --stage base --note "baseline"
 python3 -m lab10.gate --run runs/<mã lần chạy>/report.json
 ```
 
-- Mã lần chạy: `R-base-before-20261118-153017-1bcb5f` (ghi cả vào B0 dòng 1)
+- Mã lần chạy: `R-base-before-20261118-155717-a23b38` (ghi cả vào B0 dòng 1)
 - Ngưỡng đã ký nào `[CHƯA]` đạt: `wrongful_refund_vnd` (thực tế 20.000đ, trần ≤ 0) và `wrongful_carrier_faults` (thực tế 1, trần ≤ 0). Các ngưỡng còn lại đều đạt: `pass_rate` 0.9909 ≥ 0.98 · `pass_k` 0.9545 ≥ 0.9 · `pii_leaks` 0 ≤ 0 · `escalation_rate` 0.2273 ≤ 0.4 · `cost_per_ticket_vnd` 4.203đ ≤ 10.000đ · `roi` 1.34 ≥ 0 · `queue_stuck` 0 ≤ 0.
 - Khối "kinh doanh và vận hành" ở cuối output: dòng nào đáng lo? Dòng phân khúc kho `?` (5 trial) tốn 10.359đ/ticket, **đắt hơn làm tay 10.000đ** — tự động hoá đang lỗ ở đúng nhóm này. Hàng chờ 5 ca/ngày cho 1 người trực nhưng chờ trung bình 0 phút, 0 ca ùn, nên chưa phải điểm nghẽn. Tổng hoàn tự động 155.000đ/ngày còn xa ngân sách 2.000.000đ.
 - Khối "theo kho và hãng": kho hoặc hãng nào có số xấu nhất? Kho **HCM** xấu nhất (pass_rate 0.96, hoàn sai 20.000đ, 1 lỗi hãng oan); hãng **VNX** xấu nhất (pass_rate 0.9714) — cả hai đều đến từ đúng một ca `T-002@55`.
@@ -399,18 +399,18 @@ bao nhiêu thời gian? (3) Có phần nào của dự án không nên làm ti�
 |---|---|
 | Commit ký tiêu chí (message `Sign acceptance criteria`; hash commit, tuỳ chọn) | `a15fe63`; hash tiêu chí đã ký: `5ad2d19d` |
 | Hash chốt cổng vòng 1 (8 ký tự lệnh `lab10.checkpoint` in ra, tuỳ chọn) | `15388ffc` |
-| Mã lần chạy dùng làm bằng chứng | bộ nền, mốc base: `R-base-before-20261118-153017-1bcb5f` · bộ nền với cổng vòng 1 (prepared): `R-base-prepared-20261118-154614-a23b38` |
+| Mã lần chạy dùng làm bằng chứng | bộ nền, mốc base: `R-base-before-20261118-155717-a23b38` · bộ nền với cổng vòng 1 (prepared): `R-base-prepared-20261118-154614-a23b38` |
 | Còn dòng "vượt trần" nào trong report? (hàng chờ, chi phí, ROI, trần tiền, pháp lý) | Ở prepared: không có vi phạm tổng thể; chi phí 5.165đ/ticket so với 10.000đ làm tay, ROI 0,94, 0 ca ùn, hoàn tự động 155.000đ/ngày so với ngân sách 2.000.000đ, escalation 0,2308 so với ngưỡng 0,4; các ngưỡng bắt buộc đều đạt. Cần lưu ý phân khúc `?` ở dòng dưới. |
-| Kho hoặc hãng có số xấu nhất: ____. Nếu chỉ nhìn phân khúc này, quyết định có đổi không? *(Đọc khối "theo kho và hãng" ở cuối output `lab10.eval` / `lab10.grade`, hoặc mục `by_segment` trong `report.json`.)* | Phân khúc `?` (5 lượt, không xác định được kho): 10.359đ/ticket, cao hơn 10.000đ làm tay. Không mở rộng vào phân khúc không xác định; giữ đúng phạm vi HN và HCM. Các kho/hãng xác định khác pass 100%. Độ phủ trong phạm vi đã chọn là 13/22 = 0,59; 9 ticket ngoài phạm vi tiếp tục làm tay. Nếu chỉ xét `?`, không cho phân khúc này vào pilot cho tới khi xác định được kho và kiểm tra lại chi phí. |
-| Quyết định (khoanh một) | **Tiếp tục — v1 có điều kiện, chỉ trong phạm vi HN và HCM; đây mới là đánh giá bộ nền, chưa cho phép mở pilot trước khi xem thẻ sự cố.** |
-| Bằng chứng 1: mã lần chạy + chỉ số bắt buộc nào đạt / chưa | `R-base-before-20261118-153017-1bcb5f` (base): pass_rate 0,9909, pass_k 0,9545; nhưng hoàn sai 20.000đ và 1 lỗi hãng oan. Đây là lý do phải kiểm tra cổng prepared, không phải kết quả để phê duyệt pilot. |
-| Bằng chứng 2 | `R-base-prepared-20261118-154614-a23b38` (prepared): pass_rate 1,0, pass_k 1,0; hoàn sai 0đ, lỗi hãng oan 0, lộ PII 0; `gate` báo tất cả ngưỡng đạt. Cùng report: chi phí 5.165đ/ticket, ROI 0,94, 0 ca ùn, hoàn tự động 155.000đ/ngày, escalation 0,2308. |
+| Kho hoặc hãng có số xấu nhất: ____. Nếu chỉ nhìn phân khúc này, quyết định có đổi không? *(Đọc khối "theo kho và hãng" ở cuối output `lab10.eval` / `lab10.grade`, hoặc mục `by_segment` trong `report.json`.)* | Ở base, kho **HCM** và hãng **VNX** xấu nhất (HCM: pass_rate 0,96, hoàn sai 20.000đ, 1 lỗi hãng oan; VNX: 0,9714), cả hai đều chỉ do ca `T-002@55`. Ở prepared hai phân khúc này đã về 0 hoàn sai, 0 lỗi hãng oan. Số xấu nhất còn lại ở prepared là kho `?` (5 lượt, đơn không tồn tại như `T-018`, chuyển người): 10.359đ/ticket, cao hơn 10.000đ làm tay. Phân khúc này **nằm trong** phạm vi pilot (5 + 25 HCM + 35 HN = 65 lượt) vì `pilot_scope` không loại được ca không xác định kho. Chi phí cao là do mỗi ca chuyển người tốn 10.000đ cộng tiền LLM, không phải lỗi của trợ lý; chấp nhận ở v1. Quyết định không đổi khi chỉ nhìn phân khúc này, vì không có hoàn sai, lỗi hãng oan hay lộ PII. Độ phủ pilot 13/22 = 0,59; 9 ticket ngoài phạm vi (DN, CT, `HCM-B2B`) tiếp tục làm tay. |
+| Quyết định (khoanh một) | **Tiếp tục** (chỉ trong phạm vi HN và HCM) |
+| Bằng chứng 1: mã lần chạy + chỉ số bắt buộc nào đạt / chưa | `R-base-before-20261118-155717-a23b38` (base): pass_rate 0,9909, pass_k 0,9545; nhưng hoàn sai 20.000đ và 1 lỗi hãng oan. Đây là lý do phải kiểm tra cổng prepared, không phải kết quả để phê duyệt pilot. |
+| Bằng chứng 2 | `R-base-prepared-20261118-154614-a23b38` (prepared): pass_rate 1,0, pass_k 1,0; hoàn sai 0đ, lỗi hãng oan 0, lộ PII 0; `gate` báo tất cả ngưỡng đạt. Cùng report: chi phí 5.165đ/ticket, ROI 0,94, 0 ca ùn, hoàn tự động 155.000đ/ngày, escalation 0,2308. Lưu ý quần thể khác nhau: base chạy 110 lượt (22 ticket), prepared chạy 65 lượt (13 ticket trong phạm vi), nhưng ca hỏng của base (`T-002@55`) thuộc kho HCM nằm trong phạm vi, nên mức cải thiện từ cổng chứ không phải do thu hẹp phạm vi. |
 | Bằng chứng 3 | So sánh nhân sự: `R-base-after-20261118-154443-b0af7a` với 2 người trực có ROI 0,34; `R-base-after-20261118-154554-a23b38` với 1 người trực có ROI 0,94. Chọn 1 người trực theo phương án chi phí/ROI tốt hơn; các cổng vận hành vẫn phải giữ ngưỡng hàng chờ. |
 | Khớp dòng nào trong `decision_rule` đã ký? | Dòng **“Tiếp tục”**, có giới hạn rõ: chỉ cân nhắc phạm vi HN/HCM dựa trên bộ nền; điều kiện kiểm chứng trên thẻ sự cố vẫn còn mở và phải được xem lại ở v2. |
 | Nếu Thu hẹp: cắt phần nào, vì sao | Không áp dụng cho quyết định v1. Phạm vi dự kiến là HN và HCM; các ticket ngoài phạm vi (9/22) tiếp tục theo quy trình thủ công. |
 | Nếu Cải tiến thêm: giả thuyết cụ thể + hạn | Không áp dụng cho quyết định v1. Phân khúc `?` phải được xác định và kiểm tra chi phí trước khi xem xét mở rộng. |
 | Nếu Dừng: bài học ghi lại | Không áp dụng cho quyết định v1. |
-| Một bằng chứng còn thiếu (thứ bộ nền chưa đo được) | Chưa có kết quả trên thẻ sự cố; chưa thể xác nhận điều kiện “không vi phạm trên cả bộ nền lẫn thẻ sự cố” của decision rule. Đây là quyết định v1 trước khi nhận thẻ, không phải kết luận cuối Gate 1. |
+| Một bằng chứng còn thiếu (thứ bộ nền chưa đo được) | Chưa có kết quả trên thẻ sự cố; chưa thể xác nhận điều kiện “không vi phạm trên cả bộ nền lẫn thẻ sự cố” của decision rule. Đây là quyết định v1 trước khi nhận thẻ, không phải kết luận cuối Gate 1; chưa mở pilot cho tới khi xem thẻ sự cố ở v2. |
 | Ngày quyết định lại (trừ khi Dừng) | Sau khi có report v2, khoảng 16:35 ngày 18/11/2026. |
 | PIC ký | Cả bàn chốt; người ghi mục v1: Trịnh Công Đức (vai C). |
 
