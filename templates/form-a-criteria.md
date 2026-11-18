@@ -1,6 +1,6 @@
 # Phiếu A · Tiêu chí và cách đo · Khối 1 (phút 15–65)
 
-**Bàn:** ______ · **Người cầm bút chính:** vai Sản phẩm và kinh doanh (câu 1.3: Kỹ sư cổng; câu 1.2, 1.4: Vận hành và pháp lý)
+**Bàn:** Ubuntu · **Người cầm bút chính:** vai Sản phẩm và kinh doanh (câu 1.3: Kỹ sư cổng; câu 1.2, 1.4: Vận hành và pháp lý)
 
 Điền phiếu này **trước khi chạy trợ lý lần nào**. Viết xong thì chép ngưỡng sang `config/acceptance_criteria.json`, ký ở phút 60–65,
 rồi mới chạy đánh giá. Khối 1 không sửa code.
@@ -48,12 +48,12 @@ trợ lý có đang gây thiệt hại cho bên ngoài LogiX không; không có 
 
 | | Offline, cho MỘT bước (câu 1.3) | Telemetry production (câu 1.4) |
 |---|---|---|
-| **Bước / hành vi được đo** | | |
-| **Thước đo** (một câu, có đơn vị) | | |
-| **Dữ liệu** (lấy ở đâu, bao nhiêu, ai gán nhãn) | | |
-| **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | | |
+| **Bước / hành vi được đo** | Bước **ghi lỗi hãng** — `file_carrier_fault`, tức quyết định ghi một dòng buộc hãng vận chuyển chịu trách nhiệm (hãng bị phạt tiền theo số lỗi, người chịu hậu quả không tham gia cuộc trao đổi giữa khách và trợ lý). Không đo cả luồng và không đo bước "chọn độ trễ" | |
+| **Thước đo** (một câu, có đơn vị) | **Tỉ lệ dương tính giả của bước ghi lỗi hãng**: phần trăm các dòng lỗi hãng đã ghi mà chính sách đang dùng + tracking DB nói không đủ căn cứ (đơn vị %; mẫu số là số dòng lỗi đã ghi; 0% = mọi dòng lỗi đứng được trước hãng) | |
+| **Dữ liệu** (lấy ở đâu, bao nhiêu, ai gán nhãn) | Mỗi lần chạy ghi `runs/<mã lần chạy>/traces/<ticket>@<seed>.json`: trial có `faults[]` (`ticket_id`, `order_id`, `parcel_id`, `carrier_id`, `driver_id`, `delay_days`) và `events` (`policy`, `tracking`, `proposal`). Đối chiếu với `data/world.json` → `orders[].parcels[]` (`promised_date`, `delivered_date`, `delay_cause`) và `policies[]`. Bộ nền 22 ticket × 5 seed = 110 lần chạy. **Không cần người gán nhãn**: "nhãn" là tracking DB và chính sách, máy tính được (`H.db_delay_days`, `H.carrier_at_fault`); chữ khách tự khai trong ticket chỉ là dữ liệu vào | |
+| **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | Mỗi dòng lỗi = một ca kiểm. Với từng dòng: lấy `policy` theo đúng `policy_id` ở event `policy` của chính trial đó (để lỗi chọn chính sách không bị tính cho bước ghi lỗi); tính `db = H.db_delay_days(parcel, as_of)` của đúng `parcel_id` trong dòng; dòng **hợp lệ** khi đủ hai điều: (a) `delay_days` của dòng == `db`, (b) `H.carrier_at_fault(policy, parcel, db)` = True (parcel có `delay_cause` thuộc `fault_causes` và `db` ≥ `late.min_days_fee`). Tỉ lệ = số dòng **không** hợp lệ / tổng số dòng lỗi đã ghi. Trial không ghi dòng nào: loại khỏi mẫu số, đếm riêng là "không áp dụng"; dòng không tra được parcel trong `orders`: tính là không hợp lệ và đếm riêng vào cột "không kiểm được" | |
 | **Khung thời gian / ngưỡng báo động** | (không áp dụng) | |
-| **Điểm mù** (thước đo này KHÔNG thấy gì) | | |
+| **Điểm mù** (thước đo này KHÔNG thấy gì) | Chỉ đo **precision**, không thấy ca lẽ ra phải ghi mà bỏ sót (hãng thoát lỗi, khách chịu thiệt) — cần một thước đo recall riêng. Không thấy ghi đúng hãng/kiện nhưng **sai `driver_id`**. Không thấy **thiệt hại bằng tiền** (chỉ đếm dòng, không nhân mức phạt). Nhận luôn sai số của tracking DB: DB ghi `delay_cause` sai thì metric khen nhầm. Không thấy bước `notify_carrier` — ghi lỗi đúng mà không báo hãng thì hãng vẫn bị phạt mà không biết | |
 
 **Ví dụ mẫu (bước "chọn độ trễ" của agent, đừng chép):**
 Thước đo: tỉ lệ lần chạy mà độ trễ agent dùng để tính tiền khác độ trễ theo tracking DB. Dữ liệu: sự kiện `proposal.delay_days_used`
