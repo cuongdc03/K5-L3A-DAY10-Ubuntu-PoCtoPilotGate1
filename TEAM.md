@@ -13,10 +13,10 @@ Họ tên đầy đủ và MSSV của **mọi** thành viên; thêm dòng nếu 
 
 | STT | Họ và tên    | MSSV        | Vai | Trưởng nhóm |
 | --: | ------------ | ----------- | --- | :---------: |
-| 1   | Đỗ Cao Cường | 2A202603612 | D   | x           |
-| 2   | Kiệt         |             | B   |             |
-| 3   | Trịnh Công Đức| 2A202603527| C   |             |
-| 4   | Nguyễn Minh Đạt | 2A202603582 | A   |             |
+| 1   | Đỗ Cao Cường | 2A202603612 | Vận hành và pháp lý (trưởng nhóm) | x           |
+| 2   | Nguyễn Tuấn Kiệt | 2A202603417 | Kỹ sư cổng #2 (đo và kiểm) |             |
+| 3   | Trịnh Công Đức | 2A202603527 | Sản phẩm và kinh doanh |             |
+| 4   | Nguyễn Minh Đạt | 2A202603582 | Kỹ sư cổng #1 (viết code) |             |
 
 Ghi `members` trong `submission/submission.json` theo dạng `"HoVaTen-MSSV"`, khớp bảng trên.
 
@@ -100,6 +100,32 @@ Ghi `members` trong `submission/submission.json` theo dạng `"HoVaTen-MSSV"`, k
 ## Cá nhân
 
 Mỗi thành viên tự viết một mục bên dưới (chép mẫu, đổi tiêu đề thành họ tên không dấu và MSSV, ví dụ `## NguyenVanAn-20241234`).
+
+## DoCaoCuong-2A202603612
+
+### Phần việc phụ trách
+
+Vai D, Vận hành và pháp lý, kiêm trưởng nhóm. Phiếu A câu 1.2, 1.4 và mục A5; Phiếu B câu 2.4 (B4 HAZOP, B5 checklist), câu 2.10 (B7.5 runbook 1–3, B7.6 giờ cao điểm); chốt vòng 1 (lệnh 5); `config/operating_gates.json` mục `operations` và `legal`; `submission/submission.json`; quản lý repo, git và PR.
+
+### Đóng góp cụ thể
+
+- Chia 4 vai và lịch theo mốc giờ, ghi vào `TEAM.md`; thiết lập `origin` / `upstream`.
+- Viết mục tiêu nhìn từ chị Hạnh (câu 1.2) và telemetry production cho bước ghi lỗi hãng (câu 1.4: lỗi hãng bị khiếu nại hoặc đảo lại trong 7 ngày, ngưỡng báo động, điểm mù).
+- HAZOP vòng 1 trên `file_carrier_fault` (4 dòng kỹ thuật, 5 dòng ngoài kỹ thuật) và checklist 9 nhóm có PIC có tên.
+- Runbook phần 1–3 và giờ cao điểm; điền `operations` và `legal` trong config. Chặn hai khóa payload `recipient_contact` và `customer_note` khi gửi hãng, bật `carrier_fault_requires_recorded_cause`.
+- Thử 1 và 2 người trực: 1 người cho chi phí 5.165đ/ticket và ROI 0,94 (2 người: 7.473đ, ROI 0,34), mọi ngưỡng đã ký vẫn đạt, nên đặt `reviewers_on_shift` = 1 và sửa runbook cho khớp.
+- Chạy `python3 -m lab10.checkpoint` chốt vòng 1; gộp xung đột `form-a-criteria.md` giữ cả cột Offline (Kiệt) và Telemetry.
+
+### Bằng chứng
+
+- Commit `3c3f56c`, `b65d8d0`, `a14b7f0` (PR #4); commit `2047cce` (PR #6, chốt vòng 1, 8 ký tự đầu `15388ffc`).
+- Mã lần chạy: `R-base-after-20261118-154443-b0af7a` (2 người trực), `R-base-after-20261118-154554-a23b38` (1 người trực), `R-base-prepared-20261118-154614-a23b38` (mốc prepared).
+- Giờ ký tiêu chí `2026-11-18T15:03:46`, commit `a15fe63`.
+- Dùng trợ lý AI (Claude Code) để đọc repo, soạn nháp HAZOP, checklist, runbook, giá trị config và xử lý xung đột git; nhóm tự rà soát và chịu trách nhiệm về các con số.
+
+### Exit ticket
+
+Học được rằng nhiều thứ không cần code: một con số trong config (số người trực) đổi ROI từ 0,34 lên 0,94. Còn chưa chắc: thời hạn dừng 15 phút và ngưỡng gọi thêm người có hợp lý ở giờ cao điểm thật hay không, vì bộ nền chỉ có 22 ticket.
 
 ## TrinhCongDuc-2A202603527
 
