@@ -135,11 +135,11 @@ Vai C — Sản phẩm và kinh doanh: Phiếu A câu 1.1, 1.6; Phiếu B câu 2
 
 ### Đóng góp cụ thể
 
-Soạn mục tiêu hệ thống, đề xuất tiêu chí chấp nhận và quy tắc quyết định; lập bản đồ dữ liệu/trường nguồn sự thật, nêu ví dụ drift chính sách; đề xuất trần chi phí, ROI, ngân sách hoàn và phạm vi pilot dựa trên `data/world.json`. Các ngưỡng và phạm vi hiện là bản dự thảo để cả bàn rà soát trước khi ký.
+Soạn mục tiêu hệ thống, tiêu chí chấp nhận và quy tắc quyết định; lập bản đồ dữ liệu/trường nguồn sự thật, nêu ví dụ drift chính sách; đề xuất trần chi phí, ROI, ngân sách hoàn và phạm vi pilot dựa trên `data/world.json`. Tiêu chí đã được ký; trong Phiếu C C5, đặc tả điều kiện quy lỗi hãng theo từng kiện cho sự cố S6.
 
 ### Bằng chứng
 
-Các phần đã điền ở Phiếu A, Phiếu B và hai config; chưa có mã lần chạy vì tiêu chí chưa ký và chưa chạy eval. Có sử dụng trợ lý AI để đọc repo, soạn bản nháp và giải thích cách làm; nhóm cần tự rà soát, thống nhất và chịu trách nhiệm về quyết định cuối.
+Tiêu chí được ký lúc `2026-11-18T15:03:46`, commit `a15fe63`, hash `5ad2d19d5cabaeced5eec3438761ef36541b41583c2eb5c3ecbccabae146afbf`. B8 v1 dùng các mã `R-base-prepared-20261118-154614-a23b38` và `R-base-after-20261118-154443-b0af7a`; kết luận v1 là tiếp tục có điều kiện trong phạm vi HN/HCM. Đã bổ sung specification C5 cho S6 và tự chạy `python3 -m lab10.grade --incident S6`: report `R-S6-grade-20261118-165334-a23b38` là `FAIL`, after có ROI `-0,26`, pass_rate/pass_k `0,375`, hoàn sai `270.000đ`, lỗi hãng oan `5`; đề xuất C12 v2 là dừng pilot tự động. HN và HCM đều chưa đạt pass_rate nên chưa có cơ sở đổi `business.pilot_scope` để tiếp tục. Report cũng ghi chưa có test ẩn/monitor mới và thiếu integrity files của các thẻ khác. Có sử dụng trợ lý AI để đọc repo, phân tích report và soạn specification/quyết định; nhóm cần tự rà soát, cả bàn xác nhận và chịu trách nhiệm về quyết định cuối.
 
 ### Exit ticket
 
