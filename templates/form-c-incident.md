@@ -1,6 +1,6 @@
 # Phiếu C · Sự cố và quyết định v2 · Khối 3 (phút 125–200)
 
-**Bàn:** ______ · **Thẻ đã bốc:** S6 *(để trống tới phút 125; bốc số xong thì ghi đúng số đó, ví dụ `S3`. Lab Coach đối chiếu với sổ; lệnh tự kiểm tra in dòng này trong report.)*
+**Bàn:** Ubuntu · **Thẻ đã bốc:** S6 *(để trống tới phút 125; bốc số xong thì ghi đúng số đó, ví dụ `S3`. Lab Coach đối chiếu với sổ; lệnh tự kiểm tra in dòng này trong report.)*
 
 Mở `incidents/Sx/card.md` của đúng số đã bốc. Các bước trên thẻ trỏ về đúng mục trong phiếu này. Mục C3 chỉ điền phần ứng với
 số thẻ của bàn; các phần khác để trống.
@@ -248,9 +248,19 @@ Bắt buộc: ít nhất ba dòng, trong đó **một dòng là nhánh bàn chư
 
 ### Câu 3.2 · Một specification mà nếu bị vi phạm thì gây ra tác hại trên thẻ
 
-Kiểm được bằng code hoặc bằng một con số trong report: …
+Mọi `file_carrier_fault` phải gắn với đúng một kiện thuộc đơn đang xử lý; `parcel_id` và
+`carrier_id` phải khớp cùng kiện trong `tracking.parcels`. Kiện đó phải có `delay_days > 0`
+theo tracking và nguyên nhân trễ phải đủ điều kiện quy lỗi theo chính sách đang hiệu lực.
+Không có `parcel_id`, không xác định duy nhất được kiện, hoặc thiếu căn cứ về hãng/nguyên nhân
+thì không được tự chọn kiện trễ nhất để ghi lỗi; phải chuyển người xử lý. Một kiện của hãng
+khác trong cùng đơn không được dùng làm căn cứ trừ thưởng tài xế.
 
-Kiểm bằng gì (hàm trong `guards.py`, dòng report nào): …
+Kiểm bằng `lab10.guards.write_gate` trước lệnh `file_carrier_fault`, đối chiếu từng
+`parcel_id`/`carrier_id`/`delay_days` với `tracking.parcels` và chính sách hiệu lực; kiểm kết
+quả bằng `wrongful_carrier_faults` trong report sau sửa (mục tiêu `0`). Cần kiểm tra cả ca
+không có kiện xác định duy nhất phải bị chuyển người, không chỉ các ca ghi lỗi thành công.
+Ở bản code hiện tại, `H.ticket_parcel` vẫn chọn kiện trễ nhất khi ticket thiếu `parcel_id`;
+report S6 bên dưới còn 5 lỗi hãng oan, nên specification này chưa được đáp ứng.
 
 ### Câu 3.3 · Một giả định về môi trường mà người thiết kế đã ngầm tin, nhưng nhiều khả năng sai ngoài thực tế
 
@@ -444,30 +454,30 @@ Cột v1 nằm ở Phiếu B mục B8; không sửa cột đó.
 
 | | **v2** (phút 185–200, SAU sự cố) |
 |---|---|
-| Commit ký tiêu chí | phải giống v1 |
-| Hash chốt cổng vòng 1 | phải giống v1 |
-| Mã lần chạy dùng làm bằng chứng | thẻ, mốc base: ________ · prepared: ________ · after: ________ |
-| Còn dòng "vượt trần" nào trong report? (hàng chờ, chi phí, ROI, trần tiền, pháp lý) | |
-| Kho hoặc hãng có số xấu nhất: ____. Nếu chỉ nhìn phân khúc này, quyết định có đổi không? *(Khối "theo kho và hãng" trong output `lab10.eval` / `lab10.grade`, hoặc mục `by_segment` trong `report.json`.)* | |
-| Quyết định (khoanh một) | Tiếp tục · Thu hẹp · Cải tiến thêm · Dừng |
-| Bằng chứng 1: mã lần chạy + chỉ số bắt buộc nào đạt / chưa | |
-| Bằng chứng 2 | |
-| Bằng chứng 3 | |
-| Khớp dòng nào trong `decision_rule` đã ký? | |
-| Nếu Thu hẹp: cắt kho nào / còn bao nhiêu phần trăm / mấy người trực, và ticket bị cắt đi đâu | |
-| Nếu Cải tiến thêm: giả thuyết cụ thể (nhánh nào của fault tree) + hạn | |
-| Nếu Dừng: bài học ghi lại | |
-| Ngày quyết định lại (trừ khi Dừng) | |
-| PIC ký | |
+| Commit ký tiêu chí | `a15fe63`; hash `5ad2d19d5cabaeced5eec3438761ef36541b41583c2eb5c3ecbccabae146afbf` |
+| Hash chốt cổng vòng 1 | `15388ffc` |
+| Mã lần chạy dùng làm bằng chứng | S6, base: `R-S6-before-20261118-165335-a23b38` · prepared: `R-S6-prepared-20261118-165335-a23b38` · after: `R-S6-after-20261118-165335-a23b38`; report: `R-S6-grade-20261118-165334-a23b38` |
+| Còn dòng "vượt trần" nào trong report? (hàng chờ, chi phí, ROI, trần tiền, pháp lý) | ROI `-0,26 < 0`; `pass_rate` `0,375 < 0,98`; `pass_k` `0,375 < 0,90`; hoàn sai `270.000đ > 0`; lỗi hãng oan `5 > 0`. Không ùn (0), chi phí `4.412đ/ticket` so với làm tay `10.000đ`, hoàn tự động `38.000đ/ngày` so với ngân sách `2.000.000đ`, PII `0`; các chỉ số tốt này không bù được ngưỡng bắt buộc chưa đạt. |
+| Kho hoặc hãng có số xấu nhất: ____. Nếu chỉ nhìn phân khúc này, quyết định có đổi không? *(Khối "theo kho và hãng" trong output `lab10.eval` / `lab10.grade`, hoặc mục `by_segment` trong `report.json`.)* | Kho HCM: pass `0,25`, hoàn sai `270.000đ`, lỗi hãng oan `5`, PII `0`, chi phí `661đ/ticket`. Không đổi quyết định. Kho HN không có hoàn sai/lỗi hãng oan nhưng pass chỉ `0,50`, vẫn dưới ngưỡng `0,98`; không có phân khúc nào trong phạm vi hiện tại chứng minh đạt Gate 1. |
+| Quyết định (khoanh một) | **Dừng** — dừng pilot tự động; không mở theo v1. |
+| Bằng chứng 1: mã lần chạy + chỉ số bắt buộc nào đạt / chưa | `R-S6-grade-20261118-165334-a23b38`: S6 after có pass_rate `0,375`, pass_k `0,375`, hoàn sai `270.000đ`, lỗi hãng oan `5`; cả bốn đều không đạt ngưỡng đã ký. |
+| Bằng chứng 2 | ROI S6 after `-0,26` (ngưỡng tối thiểu `0`); report kết luận **không đủ căn cứ để chọn Tiếp tục**. Chi phí/ùn/ngân sách hoàn/PII đạt lần lượt `4.412đ`, `0`, `38.000đ/ngày`, `0`, nhưng không thay đổi kết luận. |
+| Bằng chứng 3 | Cổng prepared giảm lỗi hãng oan từ `40` ở base xuống `5`, nhưng không loại bỏ lỗi; after vẫn `5`. HCM còn lỗi và HN pass `0,50`, nên thu hẹp theo hai kho này không tạo được phân khúc đạt ngưỡng chất lượng. |
+| Khớp dòng nào trong `decision_rule` đã ký? | **Dừng**: report chưa kiểm soát được ghi sai tiền và ghi lỗi hãng oan; hai ngưỡng an toàn còn vi phạm, ROI âm. Không chọn Thu hẹp vì các phân khúc còn lại cũng không đạt ngưỡng chất lượng. |
+| Nếu Thu hẹp: cắt kho nào / còn bao nhiêu phần trăm / mấy người trực, và ticket bị cắt đi đâu | Không áp dụng. Không đổi `business.pilot_scope`: HN và HCM đều chưa chứng minh đạt; không dùng thu hẹp để che vi phạm. Pilot tự động dừng, ticket xử lý thủ công. |
+| Nếu Cải tiến thêm: giả thuyết cụ thể (nhánh nào của fault tree) + hạn | Không áp dụng cho quyết định Dừng. |
+| Nếu Dừng: bài học ghi lại | Cổng chọn kiện trễ nhất khi ticket không nêu kiện không tương đương với xác nhận hãng/tài xế chịu lỗi; phải có căn cứ cấp kiện và xử lý mơ hồ an toàn trước khi mở lại. |
+| Ngày quyết định lại (trừ khi Dừng) | Không áp dụng; chỉ xem xét Gate 1 mới sau khi khắc phục và chạy lại S6 cùng bộ nền. |
+| PIC ký | Đề xuất của Trịnh Công Đức (vai C); cả bàn cần xác nhận quyết định. |
 
 **Chỉ ở v2**
-- Quyết định đổi hay giữ so với v1? Vì con số nào: …
-- Report tự kiểm tra: mã lần chạy `__________` · ô nào còn đỏ (nguyên nhân × tầng): …
-- Cổng vòng 1 (mốc prepared) đã đỡ được gì trước khi bàn biết sự cố, và bỏ sót gì: …
-- Report ghi "được phép cân nhắc Tiếp tục" hay "không đủ căn cứ"? Quyết định của bàn có khớp không: …
-- Một thứ bộ thử hôm nay chưa đo, và nó ảnh hưởng quyết định ra sao: …
+- Đổi từ v1 **Tiếp tục có điều kiện** sang **Dừng**: S6 after ROI `-0,26`, pass_rate/pass_k `0,375`, hoàn sai `270.000đ`, lỗi hãng oan `5`.
+- Report tự kiểm tra: mã `R-S6-grade-20261118-165334-a23b38` · `FAIL`: visible còn ticket hỏng và vượt ROI; monitor mới chưa có; integrity cũng báo thiếu các gói S1–S5, S7–S8 trong repo; máy này không có test ẩn.
+- Cổng vòng 1 đã giảm lỗi hãng oan từ `40` xuống `5` và giữ bộ nền đạt; bỏ sót quy lỗi theo đúng kiện khi ticket không xác định kiện, cùng các lỗi S6 và ROI âm.
+- Report ghi **không đủ căn cứ để chọn Tiếp tục**; đề xuất Dừng khớp với việc còn lỗi hoàn/lỗi hãng oan và ROI âm.
+- Bộ thử ẩn và số liệu thực tế về xác định kiện, hãng/tài xế chịu lỗi chưa có; vì vậy không thể suy rộng kết quả mock thành mức an toàn ngoài pilot, và không mở lại trước khi đo/chấm lại.
 
 **Ba dòng bắt buộc** (chép nguyên ba câu này sang `submission/submission.json`, mục `three_lines`)
-1. Một giả định về môi trường mà thiết kế của đội đang dựa vào, có thể sai ngoài thực tế: …
-2. Gate của đội chỉ GIẢM khả năng hay thực sự NGĂN được tác hại? Vì sao: …
-3. Vì data là mock, cần đo lại gì trong pilot thật trước Bước đánh giá 2: …
+1. Một giả định về môi trường mà thiết kế của đội đang dựa vào, có thể sai ngoài thực tế: tracking luôn nối đúng `parcel_id` với `carrier_id`/`driver_id` và nguyên nhân trễ, đồng thời ticket chỉ đúng kiện liên quan; dữ liệu thật có thể thiếu, trễ hoặc mơ hồ.
+2. Gate của đội chỉ GIẢM khả năng hay thực sự NGĂN được tác hại? Vì sao: Gate hiện tại chỉ giảm chứ chưa ngăn được tác hại; S6 after vẫn ghi oan `5` lỗi hãng và hoàn sai `270.000đ`, trong khi nhánh không có `parcel_id` còn chọn kiện trễ nhất.
+3. Vì data là mock, cần đo lại gì trong pilot thật trước Bước đánh giá 2: đối soát mẫu từng quyết định với tracking/biên bản cấp kiện để đo lỗi quy hãng/tài xế và hoàn sai; đồng thời đo ROI, chi phí/ticket, độ phủ, chuyển người và hàng chờ theo từng kho trước khi xin mở lại.
