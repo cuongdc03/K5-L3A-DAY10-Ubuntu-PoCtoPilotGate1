@@ -115,3 +115,24 @@ Các phần đã điền ở Phiếu A, Phiếu B và hai config; chưa có mã 
 ### Exit ticket
 
 Học được rằng phải chốt tiêu chí trước khi đo, và mỗi ngưỡng kinh doanh cần gắn với một hành động/quyết định. Còn cần kiểm chứng trong report liệu phạm vi HN/HCM, tỷ lệ chuyển người và ROI có khả thi khi tính cả chi phí vận hành hay không.
+
+
+## NguyenMinhDat-2A202603582
+
+### Phần việc phụ trách
+
+Vai A – Kỹ sư cổng #1. Phụ trách câu 2.6, mục B7.1 của Phiếu B và các mục C6, C7, C9 của Phiếu C.
+
+### Đóng góp cụ thể
+
+Ở vòng 1, viết ba cổng trong `lab10/guards.py`: chặn ghi hoàn trùng, kiểm tra căn cứ ghi lỗi hãng và tính lại quyền lợi hoàn tiền theo tracking và chính sách hiệu lực. Cập nhật mô tả và kết quả kiểm thử ở B7.1.
+
+### Bằng chứng
+
+- Commit `a57d40a` trên nhánh `dat/vai-a-vong-1`.
+- 13 test công khai đạt.
+- Lần chạy `R-base-after-20261118-151055-60da30` đạt 65/65 lượt trong phạm vi pilot, với 0đ hoàn sai và 0 lỗi hãng oan.
+
+### Exit ticket
+
+Tôi học được cách kiểm tra quyền lợi từ tracking và chính sách trước khi ghi hoàn tiền. Tôi còn muốn kiểm tra cổng sẽ xử lý thế nào khi chính dữ liệu tracking bị thiếu hoặc cập nhật trễ.
