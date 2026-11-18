@@ -192,7 +192,7 @@ Không bắt buộc điền đủ năm dòng. Bắt buộc: **ít nhất ba dòn
 | Người duyệt (vận hành) | INCAPABLE | Chỉ một người trực (`reviewers_on_shift` = 1, 6 ca/giờ) mà 14 ca chuyển tới trong một giờ: ca cuối chờ khoảng 2 giờ, vượt SLA 60 phút | Khách chờ lâu, chị Hạnh quá tải, ca bị bỏ sót | `operations.reviewers_on_shift`, `review_capacity_per_hour`, `max_queue_wait_minutes`; ngưỡng gọi thêm người trong runbook |
 | Ngân sách (kinh doanh) | WRONG | Tổng hoàn tự động trong ngày vượt 2.000.000đ (ngân sách Finance) mà không ai được báo | LogiX mất tiền ngoài ngân sách; Finance không kiểm soát được | `business.daily_refund_cap_vnd` ≤ 2.000.000 và `operations.alert_channel` để báo khi gần trần |
 | Dữ liệu gửi bên thứ ba (pháp lý) | PERTURBED | Khách gõ tên, số điện thoại người khác trong ticket; trợ lý chép vào `payload` của `notify_carrier` | Người thứ ba bị lộ dữ liệu cá nhân, LogiX chịu trách nhiệm pháp lý, hãng giữ dữ liệu không cần thiết | `legal.pii_fields_blocked_to_third_party` (tên, điện thoại, địa chỉ chi tiết); chỉ gửi hãng các trường của chính sách: `order_id`, `parcel_id`, `district`, `delay_days` |
-| Phạm vi pilot (kinh doanh) | INVALID | Kho sỉ `HCM-B2B` có đơn từ 2 triệu, vượt hạn mức tự động (200.000đ theo REFUND-v3) nên gần như ca nào cũng phải chuyển người | Tự động hoá vô nghĩa, việc dồn về chị Hạnh | `business.pilot_scope` chỉ các kho lẻ (HN, HCM, DN, CT), hoặc loại `HCM-B2B` |
+| Phạm vi pilot (kinh doanh) | INVALID | Kho sỉ `HCM-B2B` có đơn từ 2 triệu, vượt hạn mức tự động (200.000đ theo REFUND-v3) nên gần như ca nào cũng phải chuyển người | Tự động hoá vô nghĩa, việc dồn về chị Hạnh | `business.pilot_scope` chỉ các kho lẻ; hiện chỉ HN và HCM, loại `HCM-B2B` |
 | Hạn mức lỗi theo hãng (vận hành, bên thứ ba) | WRONG | Từng ticket đều hợp lệ nhưng cộng dồn quá 2 lỗi/hãng/ngày (hạn mức đã thống nhất với Ops); GHSH bị đình chỉ nhanh sau 3 lỗi/7 ngày | Hãng nhỏ bị đình chỉ vì máy tự ghi liên tục | `write_gate` đếm lỗi của hãng trong ngày qua `fault_rows`, từ lỗi thứ 3 thì chuyển người (`escalate`) |
 
 **Ví dụ mẫu (`issue_refund`, đừng chép):** tham số `amount_vnd` · WRONG · số tiền tính từ số ngày khách tự khai · LogiX mất
@@ -336,7 +336,7 @@ Phần 1–3 và mục Giờ cao điểm viết ở vòng 1. Phần 4–5 viết
 | Người giữ công tắc tắt từng thao tác ghi | `NV-TUNG`; khi vắng thì `NV-HANH` | Tắt `issue_refund`, `file_carrier_fault`, `notify_carrier`, `send_reply` trong `config/switches.json` không cần xin phép | Cùng kênh chat |
 | Người nhận khiếu nại của bên thứ ba (hãng, shop, người nhận quà) | Phạm Kiều Oanh, `NV-OANH` (kế toán đối soát) | Nhận khiếu nại của hãng và shop; đảo lại một lỗi hãng hoặc khoản hoàn đã ghi sau khi đối soát | Email hoặc điện thoại của hãng; báo `NV-TUNG` trong 24 giờ khi có khiếu nại |
 
-Số người trực duyệt mỗi ca: 2 † (`operations.reviewers_on_shift`) · Mỗi giờ duyệt được: 12 ca † (`review_capacity_per_hour`; 6 ca/giờ/người) · Phạm vi pilot: kho lẻ HN, HCM, DN, CT; loại `HCM-B2B` † (`business.pilot_scope`)
+Số người trực duyệt mỗi ca: 2 † (`operations.reviewers_on_shift`) · Mỗi giờ duyệt được: 12 ca † (`review_capacity_per_hour`; 6 ca/giờ/người) · Phạm vi pilot: chỉ kho HN và HCM (`business.pilot_scope`, do Sản phẩm và kinh doanh chốt)
 
 #### Runbook 2 · Nhìn con số nào, ngưỡng nào thì làm gì
 
