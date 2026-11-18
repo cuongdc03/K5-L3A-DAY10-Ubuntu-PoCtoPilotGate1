@@ -397,22 +397,22 @@ bao nhiêu thời gian? (3) Có phần nào của dự án không nên làm ti�
 
 | | **v1** (phút 105–115, TRƯỚC khi nhận thẻ sự cố) |
 |---|---|
-| Commit ký tiêu chí (message `Sign acceptance criteria`; hash commit, tuỳ chọn) | |
-| Hash chốt cổng vòng 1 (8 ký tự lệnh `lab10.checkpoint` in ra, tuỳ chọn) | |
-| Mã lần chạy dùng làm bằng chứng | bộ nền, mốc base: ________ · bộ nền với cổng vòng 1 (prepared): ________ |
-| Còn dòng "vượt trần" nào trong report? (hàng chờ, chi phí, ROI, trần tiền, pháp lý) | |
-| Kho hoặc hãng có số xấu nhất: ____. Nếu chỉ nhìn phân khúc này, quyết định có đổi không? *(Đọc khối "theo kho và hãng" ở cuối output `lab10.eval` / `lab10.grade`, hoặc mục `by_segment` trong `report.json`.)* | |
-| Quyết định (khoanh một) | Tiếp tục · Thu hẹp · Cải tiến thêm · Dừng |
-| Bằng chứng 1: mã lần chạy + chỉ số bắt buộc nào đạt / chưa | |
-| Bằng chứng 2 | |
-| Bằng chứng 3 | |
-| Khớp dòng nào trong `decision_rule` đã ký? | |
-| Nếu Thu hẹp: cắt phần nào, vì sao | |
-| Nếu Cải tiến thêm: giả thuyết cụ thể + hạn | |
-| Nếu Dừng: bài học ghi lại | |
-| Một bằng chứng còn thiếu (thứ bộ nền chưa đo được) | |
-| Ngày quyết định lại (trừ khi Dừng) | |
-| PIC ký | |
+| Commit ký tiêu chí (message `Sign acceptance criteria`; hash commit, tuỳ chọn) | `a15fe63`; hash tiêu chí đã ký: `5ad2d19d` |
+| Hash chốt cổng vòng 1 (8 ký tự lệnh `lab10.checkpoint` in ra, tuỳ chọn) | `15388ffc` |
+| Mã lần chạy dùng làm bằng chứng | bộ nền, mốc base: `R-base-before-20261118-153017-1bcb5f` · bộ nền với cổng vòng 1 (prepared): `R-base-prepared-20261118-154614-a23b38` |
+| Còn dòng "vượt trần" nào trong report? (hàng chờ, chi phí, ROI, trần tiền, pháp lý) | Ở prepared: không có vi phạm tổng thể; chi phí 5.165đ/ticket so với 10.000đ làm tay, ROI 0,94, 0 ca ùn, hoàn tự động 155.000đ/ngày so với ngân sách 2.000.000đ, escalation 0,2308 so với ngưỡng 0,4; các ngưỡng bắt buộc đều đạt. Cần lưu ý phân khúc `?` ở dòng dưới. |
+| Kho hoặc hãng có số xấu nhất: ____. Nếu chỉ nhìn phân khúc này, quyết định có đổi không? *(Đọc khối "theo kho và hãng" ở cuối output `lab10.eval` / `lab10.grade`, hoặc mục `by_segment` trong `report.json`.)* | Phân khúc `?` (5 lượt, không xác định được kho): 10.359đ/ticket, cao hơn 10.000đ làm tay. Không mở rộng vào phân khúc không xác định; giữ đúng phạm vi HN và HCM. Các kho/hãng xác định khác pass 100%. Độ phủ trong phạm vi đã chọn là 13/22 = 0,59; 9 ticket ngoài phạm vi tiếp tục làm tay. Nếu chỉ xét `?`, không cho phân khúc này vào pilot cho tới khi xác định được kho và kiểm tra lại chi phí. |
+| Quyết định (khoanh một) | **Tiếp tục — v1 có điều kiện, chỉ trong phạm vi HN và HCM; đây mới là đánh giá bộ nền, chưa cho phép mở pilot trước khi xem thẻ sự cố.** |
+| Bằng chứng 1: mã lần chạy + chỉ số bắt buộc nào đạt / chưa | `R-base-before-20261118-153017-1bcb5f` (base): pass_rate 0,9909, pass_k 0,9545; nhưng hoàn sai 20.000đ và 1 lỗi hãng oan. Đây là lý do phải kiểm tra cổng prepared, không phải kết quả để phê duyệt pilot. |
+| Bằng chứng 2 | `R-base-prepared-20261118-154614-a23b38` (prepared): pass_rate 1,0, pass_k 1,0; hoàn sai 0đ, lỗi hãng oan 0, lộ PII 0; `gate` báo tất cả ngưỡng đạt. Cùng report: chi phí 5.165đ/ticket, ROI 0,94, 0 ca ùn, hoàn tự động 155.000đ/ngày, escalation 0,2308. |
+| Bằng chứng 3 | So sánh nhân sự: `R-base-after-20261118-154443-b0af7a` với 2 người trực có ROI 0,34; `R-base-after-20261118-154554-a23b38` với 1 người trực có ROI 0,94. Chọn 1 người trực theo phương án chi phí/ROI tốt hơn; các cổng vận hành vẫn phải giữ ngưỡng hàng chờ. |
+| Khớp dòng nào trong `decision_rule` đã ký? | Dòng **“Tiếp tục”**, có giới hạn rõ: chỉ cân nhắc phạm vi HN/HCM dựa trên bộ nền; điều kiện kiểm chứng trên thẻ sự cố vẫn còn mở và phải được xem lại ở v2. |
+| Nếu Thu hẹp: cắt phần nào, vì sao | Không áp dụng cho quyết định v1. Phạm vi dự kiến là HN và HCM; các ticket ngoài phạm vi (9/22) tiếp tục theo quy trình thủ công. |
+| Nếu Cải tiến thêm: giả thuyết cụ thể + hạn | Không áp dụng cho quyết định v1. Phân khúc `?` phải được xác định và kiểm tra chi phí trước khi xem xét mở rộng. |
+| Nếu Dừng: bài học ghi lại | Không áp dụng cho quyết định v1. |
+| Một bằng chứng còn thiếu (thứ bộ nền chưa đo được) | Chưa có kết quả trên thẻ sự cố; chưa thể xác nhận điều kiện “không vi phạm trên cả bộ nền lẫn thẻ sự cố” của decision rule. Đây là quyết định v1 trước khi nhận thẻ, không phải kết luận cuối Gate 1. |
+| Ngày quyết định lại (trừ khi Dừng) | Sau khi có report v2, khoảng 16:35 ngày 18/11/2026. |
+| PIC ký | Cả bàn chốt; người ghi mục v1: Trịnh Công Đức (vai C). |
 
 Xong v1 thì lưu và đẩy một bản (sau mốc này không sửa cột v1):
 
