@@ -26,7 +26,7 @@ Ghi `members` trong `submission/submission.json` theo dạng `"HoVaTen-MSSV"`, k
 
 | Mã  | Vai                                   | Người        | File / phiếu chính                                                                          |
 | --- | ------------------------------------- | ------------ | ------------------------------------------------------------------------------------------- |
-| A   | Kỹ sư cổng #1 (viết code)             | Đạt          | `lab10/guards.py` (`pre_guard`, `write_gate`)                                               |
+| A   | Kỹ sư cổng #1 (viết code)             | Nguyễn Minh Đạt | `lab10/guards.py` (`pre_guard`, `write_gate`)                                               |
 | B   | Kỹ sư cổng #2 (đo và kiểm)            | Kiệt         | `lab10/monitors.py`; chạy `eval`, `gate`, `trace`, `grade`                                  |
 | C   | Sản phẩm và kinh doanh                | Đức          | `config/acceptance_criteria.json`; `operating_gates.json` mục `business`; Phiếu A           |
 | D   | Vận hành và pháp lý (**trưởng nhóm**) | Đỗ Cao Cường | `operating_gates.json` mục `operations`, `legal`; `submission/submission.json`; repo và git |
@@ -135,15 +135,15 @@ Vai C — Sản phẩm và kinh doanh: Phiếu A câu 1.1, 1.6; Phiếu B câu 2
 
 ### Đóng góp cụ thể
 
-Soạn mục tiêu hệ thống, tiêu chí chấp nhận và quy tắc quyết định; lập bản đồ dữ liệu/trường nguồn sự thật, nêu ví dụ drift chính sách; đề xuất trần chi phí, ROI, ngân sách hoàn và phạm vi pilot dựa trên `data/world.json`. Tiêu chí đã được ký; trong Phiếu C C5, đặc tả điều kiện quy lỗi hãng theo từng kiện cho sự cố S6.
+Soạn mục tiêu hệ thống, tiêu chí chấp nhận và quy tắc quyết định; lập bản đồ dữ liệu/trường nguồn sự thật, nêu ví dụ drift chính sách; đề xuất trần chi phí, ROI, ngân sách hoàn và phạm vi pilot dựa trên `data/world.json`. Ở Phiếu C C5, đặc tả điều kiện quy lỗi hãng theo đúng kiện và căn cứ tracking; phân tích số liệu kinh doanh S6, giữ phạm vi pilot HN/HCM và ghi quyết định v2 Tiếp tục sau khi cả bàn xác nhận report sau sửa.
 
 ### Bằng chứng
 
-Tiêu chí được ký lúc `2026-11-18T15:03:46`, commit `a15fe63`, hash `5ad2d19d5cabaeced5eec3438761ef36541b41583c2eb5c3ecbccabae146afbf`. B8 v1 dùng các mã `R-base-prepared-20261118-154614-a23b38` và `R-base-after-20261118-154443-b0af7a`; kết luận v1 là tiếp tục có điều kiện trong phạm vi HN/HCM. Đã bổ sung specification C5 cho S6 và tự chạy `python3 -m lab10.grade --incident S6`: report `R-S6-grade-20261118-165334-a23b38` là `FAIL`, after có ROI `-0,26`, pass_rate/pass_k `0,375`, hoàn sai `270.000đ`, lỗi hãng oan `5`; đề xuất C12 v2 là dừng pilot tự động. HN và HCM đều chưa đạt pass_rate nên chưa có cơ sở đổi `business.pilot_scope` để tiếp tục. Report cũng ghi chưa có test ẩn/monitor mới và thiếu integrity files của các thẻ khác. Có sử dụng trợ lý AI để đọc repo, phân tích report và soạn specification/quyết định; nhóm cần tự rà soát, cả bàn xác nhận và chịu trách nhiệm về quyết định cuối.
+Tiêu chí được ký lúc `2026-11-18T15:03:46`, commit `a15fe63`, hash `5ad2d19d5cabaeced5eec3438761ef36541b41583c2eb5c3ecbccabae146afbf`. B8 v1 dùng `R-base-prepared-20261118-154614-a23b38` và `R-base-after-20261118-154443-b0af7a`; kết luận v1 là tiếp tục có điều kiện trong HN/HCM. Với S6, report cuối `R-S6-grade-20261118-170827-9e1216` so sánh base / prepared / after; after `R-S6-after-20261118-170827-9e1216` đạt `pass_rate=1,0`, `pass_k=1,0`, hoàn sai `0đ`, lỗi hãng oan `0`, PII `0`, ROI `0,45`, chi phí `6.887đ/ticket`, 0 ca ùn, escalation `0,25`, độ phủ `0,67`. Bộ nền sau sửa `R-base-after-20261118-170617-9e1216` không hồi quy, ROI `0,94`; tiêu chí ký và monitor đều đạt. C12 v2 được cả bàn chốt Tiếp tục trong HN/HCM, giữ 1 người trực và hẹn xem lại sau tuần đầu pilot / bài kiểm tra ẩn. Grade report vẫn ghi `FAIL` duy nhất ở integrity do repo này chỉ có gói sự cố S6 trong khi manifest kiểm tra các gói S1–S8; visible, regression và monitor đều đạt, và máy này không có test ẩn. Có sử dụng trợ lý AI để đọc repo, phân tích report và soạn specification; nhóm đã rà soát, cả bàn chịu trách nhiệm về quyết định cuối.
 
 ### Exit ticket
 
-Học được rằng phải chốt tiêu chí trước khi đo, và mỗi ngưỡng kinh doanh cần gắn với một hành động/quyết định. Còn cần kiểm chứng trong report liệu phạm vi HN/HCM, tỷ lệ chuyển người và ROI có khả thi khi tính cả chi phí vận hành hay không.
+Học được rằng đặc tả đúng đơn vị dữ liệu (kiện thay vì đơn) và chuyển người khi thiếu căn cứ giúp loại bỏ các lỗi đã biết, nhưng có đánh đổi: S6 escalation tăng lên `0,25`, chi phí `6.887đ/ticket`, dù ROI vẫn `0,45` và độ phủ `0,67`. Cần kiểm chứng lại tracking cấp kiện, ROI, khiếu nại hãng nhỏ và hàng chờ trên dữ liệu pilot thật trước Bước đánh giá 2.
 
 
 ## NguyenMinhDat-2A202603582
@@ -156,7 +156,7 @@ Vai A – Kỹ sư cổng #1. Phụ trách `lab10/guards.py`, câu 2.6 (B7.1) c�
 
 - **Vòng 1:** Viết ba cổng để chặn ghi hoàn trùng, kiểm tra căn cứ ghi lỗi hãng và tính lại quyền lợi hoàn tiền từ tracking theo chính sách hiệu lực. Ghi mô tả và kết quả kiểm thử vào B7.1.
 - **Vòng 2 – S6:** Sửa `write_gate` để ghi lỗi đúng kiện, hãng và tài xế theo tracking. Chuyển người duyệt trước khi hoàn tiền nếu nhiều kiện trễ mà ticket thiếu mã kiện, và chuyển duyệt khi hãng đã chạm trần ghi lỗi tự động trong ngày. Điền cây lỗi trước sửa, bảng biện pháp và cây lỗi sau sửa ở C6, C7, C9.
-- **Sử dụng AI:** Dùng ChatGPT để đọc repo, hỗ trợ viết code cổng, giải thích kết quả. Tôi trực tiếp chạy các lệnh kiểm thử và đánh giá.
+- **Sử dụng AI:** Dùng ChatGPT để đọc repo, hỗ trợ viết code cổng, cập nhật phiếu và giải thích kết quả. Tôi trực tiếp chạy các lệnh kiểm thử và đánh giá.
 
 ### Bằng chứng
 
@@ -165,7 +165,7 @@ Vai A – Kỹ sư cổng #1. Phụ trách `lab10/guards.py`, câu 2.6 (B7.1) c�
 
 ### Exit ticket
 
-Học được rằng ticket thiếu mã kiện cần được chuyển duyệt trước khi ghi hoàn tiền. Muốn kiểm tra cách hệ thống áp dụng trần ghi lỗi khi nhiều tiến trình cùng ghi cho một hãng.
+Tôi học được rằng ticket thiếu mã kiện cần được chuyển duyệt trước khi ghi hoàn tiền. Tôi còn muốn kiểm tra cách hệ thống áp dụng trần ghi lỗi khi nhiều tiến trình cùng ghi cho một hãng.
 
 ## NguyenTuanKiet-2A202603417
 
