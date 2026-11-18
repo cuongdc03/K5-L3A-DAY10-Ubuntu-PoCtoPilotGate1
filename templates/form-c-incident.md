@@ -30,7 +30,7 @@ Mỗi lệnh `lab10.eval` và `lab10.grade` tự ghi một dòng vào `runs/jour
 
 | # | Mã lần chạy | Bộ ticket · mốc | Đổi MỘT thứ gì so với lần trước | pass_rate (khoảng tin cậy 95%) | pass_k | Hoàn sai (đ) · lỗi hãng oan · lộ dữ liệu | Tỉ lệ chuyển người | Kết luận (một câu) |
 |---|---|---|---|---|---|---|---|---|
-| 1 | | Sx · prepared | nhận thẻ đã bốc, chưa sửa thêm (đúng cổng vòng 1 đã chốt) | | | | | |
+| 1 | `R-S6-prepared-20261118-163532-a23b38` | S6 · prepared | nhận thẻ đã bốc, chưa sửa thêm (đúng cổng vòng 1 đã chốt) | 0.375 (CI95 0.125–0.75) | 0.375 | 270.000đ · 5 · 0 | 0.0 | Cổng vòng 1 giảm lỗi hãng oan từ 40 xuống 5 nhưng hoàn sai vẫn 270.000đ và ROI -0.26: chưa đủ để chọn Tiếp tục. |
 | 2 | | Sx · after | | | | | | |
 | 3 | | Sx · after | | | | | | |
 | 4 | | base · after | (kiểm không regression) | | | | | |
@@ -47,19 +47,20 @@ Chạy **trước khi sửa bất cứ thứ gì**:
 python3 -m lab10.grade --incident Sx
 ```
 
-- Mã lần chạy grade: `__________` · base: `__________` · prepared: `__________`
-- Cổng vòng 1 đỡ được ô / con số nào (so cột base với cột prepared): …
-- Khối kinh doanh và vận hành còn dòng nào vượt trần: …
+- Mã lần chạy grade: `R-S6-grade-20261118-163532-a23b38` · base: `R-S6-before-20261118-163532-a23b38` · prepared: `R-S6-prepared-20261118-163532-a23b38`
+- Cổng vòng 1 đỡ được ô / con số nào (so cột base với cột prepared): lỗi hãng oan trên gói S6 giảm từ 40 xuống 5; `pass_rate` nhích từ 0.3333 lên 0.375. Hoàn sai **không đổi** (270.000đ) và độ phủ pilot tụt từ 1.0 xuống 0.6667. Trên bộ nền: vẫn sạch (không ca mới hỏng).
+- Khối kinh doanh và vận hành còn dòng nào vượt trần: ROI -0.26 thấp hơn ngưỡng 0.0 (chi phí mỗi ticket 4.412đ). Ngưỡng đã ký chưa đạt: `pass_rate` (0.375 so với 0.98), `pass_k` (0.375 so với 0.9), `wrongful_refund_vnd` (270.000đ so với 0), `wrongful_carrier_faults` (5 so với 0), `roi` (-0.26 so với 0.0).
 
 **Mở lại pre-mortem (Phiếu B mục B6), viết bằng bút khác màu.** Với thẻ S1, S3, S4, S5 đây là một phần của phần riêng theo thẻ.
 
-- Sự cố trên thẻ thuộc lăng kính nào (kỹ thuật, kinh doanh, con người và vận hành, pháp lý)? …
-- Có nằm trong các lý do bàn đã viết không? Nếu có: cổng vòng 1 đã đỡ được bao nhiêu (đọc cột prepared trong report)? Nếu không: vì sao cả bàn không nghĩ tới? …
+- Sự cố trên thẻ thuộc lăng kính nào (kỹ thuật, kinh doanh, con người và vận hành, pháp lý)? Chủ yếu **kỹ thuật** (agent coi cả đơn là một đơn vị chịu lỗi và lấy hãng của kiện đầu) và **vận hành, pháp lý** (hãng nhỏ GHSH bị phạt, trừ thưởng chuyên cần của tài xế; bên thứ ba không tham gia cuộc trao đổi).
+- Có nằm trong các lý do bàn đã viết không? **Một phần**: HAZOP vòng 1 (Phiếu B mục B4) có dòng INVALID (`parcel_id` không thuộc `order_id`) và dòng hạn mức lỗi theo hãng; cổng vòng 1 đã đỡ 35 trong 40 lỗi hãng oan. **Không nghĩ tới**: hoàn tiền khi hai hãng cùng trễ, vì cả bàn tập trung vào việc ghi lỗi hãng mà quên rằng `issue_refund` chạy trước `file_carrier_fault`, và cổng của chúng ta chỉ chặn (`deny`) chứ không sửa hay chuyển người.
 - Lý do còn thiếu, thêm bây giờ:
 
 | Lý do thất bại (viết ở thì quá khứ) | Lăng kính | Kiểm được bằng gì (trace / data / config nào) |
 |---|---|---|
-| | | |
+| Đơn tách kiện có hai hãng cùng trễ, khách không nói rõ kiện nào; trợ lý vẫn hoàn tiền và tự chọn một bên chịu lỗi | Kỹ thuật, con người và vận hành | Trace `S6-20@11`: `tracking.parcels` có GHSH trễ 3 ngày và VNX trễ 5 ngày; `issue_refund` 26.000đ trong khi nhãn là chuyển người |
+| Hãng nhỏ không chịu nổi việc bị ghi lỗi liên tiếp trong một ngày, vì không có trần số lỗi tự động theo hãng | Vận hành, pháp lý | `ops_limits.max_auto_strikes_per_carrier_per_day` = 2; `data/world.json` → `carriers` (GHSH bị đình chỉ sau 3 lỗi/7 ngày) |
 
 ---
 
@@ -159,19 +160,19 @@ duyệt, chờ duyệt, trần).
 **Cách làm:** thảo luận theo nhóm rồi ghi cho **từng nhóm người dùng**: họ là ai, mục tiêu chính là gì, và hiện
 nay họ làm việc này **từng bước ra sao**, đồng đều hay mỗi nơi một kiểu. Dòng cuối: **hệ thống đang mang hình dung nào**, đọc từ trace.
 
-| | Nhóm A: `__________` (gợi ý: điều phối / tài xế của hãng) | Nhóm B: `__________` (gợi ý: kế toán đối soát hoặc CSKH) |
+| | Nhóm A: `Điều phối và trưởng nhóm tài xế của hãng (Sông Hồng, GHSH)` | Nhóm B: `Kế toán đối soát (chị Phạm Kiều Oanh)` |
 |---|---|---|
-| Họ là ai, chạm vào kết quả của trợ lý ở đâu | | |
-| Mục tiêu chính của họ | | |
-| Hiện nay họ xác định "ai chịu lỗi giao trễ" theo các bước nào | | |
-| Cách làm đó đồng đều hay mỗi nơi một kiểu | | |
-| Theo hình dung của họ, **đơn vị chịu lỗi** là gì (đơn / kiện / chặng / tài xế)? | | |
+| Họ là ai, chạm vào kết quả của trợ lý ở đâu | Hộ kinh doanh 12 tài xế nội thành Hà Nội; nhận thông báo lỗi và tiền phạt (150.000đ/lỗi) từ trợ lý rồi trừ thưởng chuyên cần của tài xế | Không dùng trợ lý; mỗi tuần khớp sổ cái và lỗi hãng với hãng và shop |
+| Mục tiêu chính của họ | Tài xế chỉ bị phạt khi chính kiện của họ giao trễ; không bị đình chỉ (sau 3 lỗi/7 ngày) vì lỗi của hãng khác | Mỗi dòng phạt khớp một kiện, một hãng và một nguyên nhân trong tracking, để đối soát không lệch |
+| Hiện nay họ xác định "ai chịu lỗi giao trễ" theo các bước nào | Mở từng **kiện** theo mã kiện và tài xế, so ngày hẹn với ngày giao của kiện đó, rồi mới nhận lỗi | Đối chiếu từng dòng lỗi với tracking của **kiện** (hãng, tài xế, nguyên nhân) và sổ cái |
+| Cách làm đó đồng đều hay mỗi nơi một kiểu | Mỗi hãng một kiểu: hãng lớn có hệ thống theo dõi, hãng nhỏ ghi tay *(cần xác nhận với phòng Đối tác)* | Khá đồng đều theo từng kiện, nhưng chưa có quy tắc cho đơn hai hãng cùng trễ *(cần xác nhận với chị Oanh)* |
+| Theo hình dung của họ, **đơn vị chịu lỗi** là gì (đơn / kiện / chặng / tài xế)? | Kiện và tài xế | Kiện (cùng hãng, tài xế) |
 
 **Hệ thống đang mang hình dung nào?** (đọc trace một ticket hỏng: `tracking.parcels` so với dòng `file_carrier_fault`)
 
-- Với hệ thống, đơn vị chịu lỗi là: `__________`. Bằng chứng: ticket `______@seed ____`, dòng trace: `__________`.
-- Chỗ hai hình dung vênh nhau: `__________`.
-- Khi đầu vào không đủ để áp hình dung của con người (không biết kiện nào), hệ thống đang làm gì: `__________`; nên làm gì: `__________`.
+- Với hệ thống, đơn vị chịu lỗi là: `đơn` (lấy hãng của kiện đầu `parcels[0]` làm hãng của cả đơn). Bằng chứng: ticket `S6-01@seed 11`, dòng trace `06 tool file_carrier_fault` ghi kiện `O-2601-P1` (GHSH, trễ 0 ngày) trong khi kiện trễ là `O-2601-P2` (VNX, trễ 4 ngày); `S6-03@11` tương tự với đơn 3 kiện.
+- Chỗ hai hình dung vênh nhau: người coi **kiện** là đơn vị chịu lỗi, hệ thống coi **đơn**; vì vậy hãng của kiện đầu bị ghi lỗi dù kiện của họ giao đúng hẹn.
+- Khi đầu vào không đủ để áp hình dung của con người (không biết kiện nào), hệ thống đang làm gì: `vẫn hoàn tiền (26.000đ ở S6-20@11) và tự chọn một bên; cổng vòng 1 chỉ chặn việc ghi lỗi (deny) nên khoản hoàn vẫn chạy`; nên làm gì: `chuyển người duyệt trước bước hoàn tiền đầu tiên, không hoàn và không ghi lỗi cho tới khi biết kiện nào`.
 
 → Mỗi chỗ vênh là một nhánh của fault tree. Gate tốt làm cho hệ thống hành xử theo hình dung của người chịu hậu quả.
 
@@ -230,13 +231,13 @@ Mở lại Phiếu B mục B3. Ghi ở đây những dòng đổi so với vòng
 
 *Mục riêng, không ghi đè HAZOP vòng 1 ở Phiếu B mục B4. Năm guideword và nghĩa của chúng: xem Phiếu B mục B4.*
 
-Tool chọn phân tích: `________________`
+Tool chọn phân tích: `file_carrier_fault` (và `issue_refund`, vì chạy trước)
 
 | Tham số / dòng dữ liệu | Guideword (WRONG / INVALID / INCOMPLETE / PERTURBED / INCAPABLE) | Lệch cụ thể (mã ticket, trường dữ liệu của thẻ) | Hậu quả, cho ai | Hiện có gì ngăn? | Gate đề xuất + tầng |
 |---|---|---|---|---|---|
-| | | | | | |
-| | | | | | |
-| | | | | | |
+| `parcel_id`, `carrier_id`, `driver_id` | WRONG | Agent lấy `parcels[0]` làm kiện chịu lỗi (`S6-01@11`: P1 của GHSH trễ 0 ngày, kiện trễ là P2 của VNX) | GHSH bị phạt oan 150.000đ/lỗi và trừ thưởng chuyên cần của tài xế | Cổng vòng 1 chỉ chặn (`deny`) nên không ghi lỗi nào, kể cả lỗi đúng | `write_gate`: sửa (`modify`) sang kiện trễ thật từ tracking (chặn và sửa) |
+| `parcel_id` từ ticket | INCOMPLETE | Ticket không nêu kiện, có hai kiện cùng trễ (`S6-20@11`: GHSH 3 ngày, VNX 5 ngày); `issue_refund` chạy 26.000đ rồi lỗi bị chặn | Hoàn tiền sai cho khách (270.000đ hoàn sai trong gói S6), lỗi hãng không rõ cho ai | Không có | `pre_guard` hoặc `write_gate` trên `issue_refund` và `file_carrier_fault`: chuyển người (`escalate`) khi từ 2 kiện trở lên trễ mà ticket không chỉ rõ (chặn trước bước ghi đầu tiên) |
+| Số lỗi tự động của một hãng trong ngày *(nhánh chưa thấy trên trace lúc viết)* | WRONG | Từng ticket hợp lệ riêng lẻ nhưng cộng dồn quá 2 lỗi/hãng/ngày (`ops_limits.max_auto_strikes_per_carrier_per_day`); GHSH bị đình chỉ sau 3 lỗi/7 ngày | Hãng nhỏ bị đình chỉ vì máy ghi liên tục, tài xế mất thưởng | Không có trần theo hãng | `write_gate`: đếm lỗi của hãng trong ngày qua `fault_rows`, từ lỗi thứ 3 thì chuyển người (giới hạn thiệt hại) |
 
 Bắt buộc: ít nhất ba dòng, trong đó **một dòng là nhánh bàn chưa thấy trên trace** lúc viết.
 
@@ -264,9 +265,9 @@ report S6 bên dưới còn 5 lỗi hãng oan, nên specification này chưa đ�
 
 ### Câu 3.3 · Một giả định về môi trường mà người thiết kế đã ngầm tin, nhưng nhiều khả năng sai ngoài thực tế
 
-Giả định (thứ nằm NGOÀI phần mềm): …
+Giả định (thứ nằm NGOÀI phần mềm): dữ liệu tracking của hãng vận chuyển (ngày giao, kiện và tài xế của từng kiện) luôn đúng và được cập nhật kịp thời, nên cổng lấy tracking làm nguồn sự thật để quyết định kiện nào trễ.
 
-Vì sao có thể sai: …
+Vì sao có thể sai: hãng nhỏ (GHSH có 12 tài xế, DNB là tài xế tự do) cập nhật tay hoặc chậm; kiện giao đúng hẹn có thể chưa có `delivered_date` nên bị tính là trễ, hoặc kiện trễ chưa được ghi nguyên nhân. Khi đó cổng vẫn ghi lỗi sai cho hãng nhỏ, đúng kiểu thiệt hại trên thẻ.
 
 ---
 
@@ -405,7 +406,7 @@ Kết quả S6 trong phạm vi pilot: 40/40 lượt đạt, 0 lỗi ghi oan, 0đ
 
 | Rủi ro | Khả năng | Tác động | Người phụ trách (PIC, một người) | Dấu hiệu (metric nào, ngưỡng nào) | Xử lý | Ảnh hưởng bước đánh giá | Nhóm chức năng (GOVERN / MAP / MEASURE / MANAGE) |
 |---|---|---|---|---|---|---|---|
-| | | | | | | | |
+| Ghi lỗi nhầm cho hãng nhỏ khi đơn tách kiện hoặc hai hãng cùng trễ; tài xế bị trừ thưởng, hãng bị đình chỉ | Trung bình (đơn tách kiện là nhóm ticket hỏng nhiều nhất ở S6) | Cao: phạt 80.000–150.000đ/lỗi, đình chỉ sau 3 lỗi/7 ngày | NV-TUNG (Lê Thanh Tùng) | `wrongful_carrier_faults` trong report > 0; chỉ số mới trong `monitors.py` (lỗi ghi vào kiện đúng hẹn) > 0 | Tắt `file_carrier_fault`, chuyển các ca đó cho người duyệt; NV-OANH báo hãng và đảo lại lỗi trong 24 giờ | Nếu còn > 0 thì không chọn Tiếp tục ở Bước đánh giá 2 | MANAGE |
 
 Quy tắc: **mỗi dòng phải đổi được một quyết định.** Cột "Dấu hiệu" phải là một metric có trong `monitors.py` hoặc trong report.
 
@@ -421,26 +422,27 @@ Ghi các dòng đổi sau sự cố. Mỗi dòng vẫn phải có một PIC có 
 
 | # nhóm | Trạng thái mới (Xong / Chưa / Không áp dụng) | Bằng chứng mới (mã lần chạy, mục phiếu, số trong report) | PIC |
 |---|---|---|---|
-| | | | |
-| | | | |
+| 1 Chất lượng | Chưa | Prepared S6: `pass_rate` 0.375, hoàn sai 270.000đ (`R-S6-prepared-20261118-163532-a23b38`); chờ mã after | Kiệt |
+| 4 Quyền hạn | Chưa | Cổng ghi lỗi hãng chỉ `deny`, chưa chuyển người khi mơ hồ; chờ mã after sau khi Đạt sửa `write_gate` | Đạt |
+| 8 Con người, pháp lý | Chưa | Bên thứ ba bị ảnh hưởng: GHSH và tài xế; cần quy trình báo và đảo lỗi trong 24 giờ (Runbook 4) | Cường |
 
 ### Runbook 4 · Sau sự cố trên thẻ (vòng 2)
 
 | Câu hỏi | Trả lời |
 |---|---|
-| Tín hiệu nào ở Runbook 2 (Phiếu B mục B7.5) lẽ ra phải báo trước sự cố này? Nó đã có chưa? | |
-| Bàn thêm hoặc đổi ngưỡng nào, từ bao nhiêu thành bao nhiêu? | |
-| Bàn đổi gì về **người** (số người trực, ai đứng tên, ai được gọi)? | |
-| Bàn đổi gì về **phạm vi** hoặc **quy trình** (kiểm mẫu, ghi chú giải thích, trần)? | |
-| Nói gì với bên thứ ba bị ảnh hưởng (hãng, shop, người nhận, nhân viên duyệt), ai nói, trong bao lâu? | |
-| Dữ liệu cá nhân nào đã rời hệ thống mà không thu hồi được? Báo cho ai? | |
-| Sự cố lộ ra trước qua số máy đo, phản hồi của người, hay đọc nội dung? Nguồn nào bàn chưa có? | |
+| Tín hiệu nào ở Runbook 2 (Phiếu B mục B7.5) lẽ ra phải báo trước sự cố này? Nó đã có chưa? | Dòng "Lỗi ghi oan cho hãng" lẽ ra phải báo, nhưng nó chỉ dựa vào khiếu nại của hãng (trễ tới 7 ngày) và `wrongful_carrier_faults` của report (cần nhãn). Chưa có chỉ số tự động báo ngay khi một lỗi được ghi vào kiện đúng hẹn: sẽ thêm ở `monitors.py`. |
+| Bàn thêm hoặc đổi ngưỡng nào, từ bao nhiêu thành bao nhiêu? | Thêm tín hiệu "lỗi hãng ghi vào kiện đúng hẹn": từ chưa có thành đỏ ở > 0 (tắt `file_carrier_fault`). Thêm trần 2 lỗi tự động mỗi hãng mỗi ngày (từ không giới hạn), từ lỗi thứ 3 chuyển người. Ca hai hãng cùng trễ mà ticket không nêu kiện: chuyển người 100%. |
+| Bàn đổi gì về **người** (số người trực, ai đứng tên, ai được gọi)? | Giữ 1 người trực (NV-HANH) vì S6 chỉ thêm ca chuyển người, chờ lâu nhất vẫn 0 phút. NV-OANH nhận khiếu nại của hãng nhỏ trong 24 giờ; NV-TUNG giữ công tắc tắt `file_carrier_fault`. Cần theo dõi hàng chờ sau thay đổi (chuyển người tăng) và gọi thêm người theo ngưỡng Runbook 2. |
+| Bàn đổi gì về **phạm vi** hoặc **quy trình** (kiểm mẫu, ghi chú giải thích, trần)? | Đơn tách kiện có từ hai hãng trở lên cùng trễ đi thẳng cho người duyệt cho tới khi có bằng chứng đạt; kiểm lại 100% lỗi hãng trong tuần đầu; giữ phạm vi HN và HCM. |
+| Nói gì với bên thứ ba bị ảnh hưởng (hãng, shop, người nhận, nhân viên duyệt), ai nói, trong bao lâu? | NV-OANH liên hệ trưởng nhóm tài xế Sông Hồng trong 24 giờ: xác nhận kiện nào trễ, đảo lại các lỗi oan, báo kết quả cho phòng Đối tác; NV-TUNG được báo cùng lúc. |
+| Dữ liệu cá nhân nào đã rời hệ thống mà không thu hồi được? Báo cho ai? | Không có: `pii_leaks` = 0 trên gói S6; hai khóa `recipient_contact` và `customer_note` đã bị chặn khi gửi hãng. |
+| Sự cố lộ ra trước qua số máy đo, phản hồi của người, hay đọc nội dung? Nguồn nào bàn chưa có? | Qua **phản hồi của người** (tin thoại của trưởng nhóm tài xế), không phải số máy đo. Nguồn chưa có: kênh nhận khiếu nại chính thức của hãng và bảng công, bảng thưởng của hãng để đối chiếu. |
 
 ### Runbook 5 · Ba kịch bản "nếu … thì …" cho tuần đầu chạy thử thật
 
-1. Nếu số ticket tăng gấp ___ lần trong một giờ thì: …
-2. Nếu nhà cung cấp LLM lỗi quá ___ phút thì: …
-3. Nếu người duyệt báo không tin một quyết định của trợ lý thì: …
+1. Nếu số ticket tăng gấp 3 lần trong một giờ thì: khoảng 9 ca/ngày chuyển người, vẫn dưới 6 ca/giờ của 1 người; khi hàng chờ ≥ 6 ca hoặc chờ lâu nhất ≥ 30 phút thì NV-HANH gọi thêm 1 người; ≥ 45 phút thì NV-TUNG thu hẹp phạm vi.
+2. Nếu nhà cung cấp LLM lỗi quá 10 phút thì: NV-TUNG tắt cả bốn thao tác ghi trong `config/switches.json`, mọi ticket mới đi thẳng cho người duyệt (làm tay 10.000đ/ticket) tới khi LLM chạy lại và đo lại trên bộ nền.
+3. Nếu người duyệt báo không tin một quyết định của trợ lý thì: ghi lại ca đó, NV-HANH cho kiểm mẫu tối thiểu 10% quyết định tự động (`staff_behavior.trust_conditions`), bật ghi chú giải thích cho mỗi quyết định; NV-TUNG xem lại ngưỡng nếu có từ 2 ca không tin trong một ca trực.
 
 ---
 

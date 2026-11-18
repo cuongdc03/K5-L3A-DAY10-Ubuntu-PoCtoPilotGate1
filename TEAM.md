@@ -5,7 +5,7 @@
 - Tên nhóm (`TenNhom`, không dấu, không khoảng trắng):Ubuntu
 - Lớp: `L3A` 
 - Repo của bàn: cuongdc03/K5-L3A-DAY10-Ubuntu-PoCtoPilotGate1
-- Thẻ sự cố đã bốc (S1–S8):
+- Thẻ sự cố đã bốc (S1–S8): S6
 
 ## Thành viên
 
