@@ -37,6 +37,12 @@ def pre_guard(ctx):
     return Verdict.allow()
 
 
+def _ambiguous_late_parcels(ctx, order):
+    if ctx.ticket.get("parcel_id"):
+        return False
+    return sum(H.db_delay_days(parcel, ctx.as_of) > 0 for parcel in order["parcels"]) >= 2
+
+
 def write_gate(ctx, action):
     if action["tool"] == "issue_refund":
         existing = ctx.tools.ledger_rows(
@@ -50,6 +56,9 @@ def write_gate(ctx, action):
         policy = H.effective_policy(ctx.tools.lookup_policies(), ctx.as_of)
         if not order or not order["parcels"] or policy is None:
             return Verdict.escalate("Thiếu tracking hoặc chính sách để kiểm tra khoản hoàn")
+
+        if _ambiguous_late_parcels(ctx, order):
+            return Verdict.escalate("Hai kiện trễ, chưa rõ lỗi của hãng nào")
 
         requested_parcel = ctx.ticket.get("parcel_id")
         if requested_parcel and not any(
@@ -73,6 +82,9 @@ def write_gate(ctx, action):
         if not order or not order["parcels"]:
             return Verdict.deny("Không có dữ liệu kiện hàng để ghi lỗi hãng")
 
+        if _ambiguous_late_parcels(ctx, order):
+            return Verdict.escalate("Hai kiện trễ, chưa rõ lỗi của hãng nào")
+
         requested_parcel = ctx.ticket.get("parcel_id")
         if requested_parcel and not any(
             parcel["parcel_id"] == requested_parcel for parcel in order["parcels"]
@@ -80,18 +92,23 @@ def write_gate(ctx, action):
             return Verdict.deny("Kiện được chỉ định không thuộc đơn hàng")
 
         parcel = H.ticket_parcel(order, ctx.ticket, ctx.as_of)
-        if (
-            action.get("parcel_id") != parcel["parcel_id"]
-            or action.get("carrier_id") != parcel["carrier_id"]
-        ):
-            return Verdict.deny("Kiện hoặc hãng không khớp dữ liệu tracking")
-
         policy = H.effective_policy(ctx.tools.lookup_policies(), ctx.as_of)
         delay_days = H.db_delay_days(parcel, ctx.as_of)
         if policy is None or not H.carrier_at_fault(policy, parcel, delay_days):
             return Verdict.deny("Tracking và chính sách chưa đủ căn cứ ghi lỗi hãng")
 
-        if action.get("delay_days") != delay_days:
-            return Verdict.modify("Dùng độ trễ theo tracking", delay_days=delay_days)
+        carrier_id = parcel["carrier_id"]
+        limit = ctx.tools.ops_limits().get("max_auto_strikes_per_carrier_per_day")
+        if limit is not None and len(ctx.tools.fault_rows(carrier_id=carrier_id)) >= limit:
+            return Verdict.escalate("Hãng đã đạt trần ghi lỗi tự động trong ngày")
+
+        verified = {
+            "parcel_id": parcel["parcel_id"],
+            "carrier_id": carrier_id,
+            "driver_id": parcel.get("driver_id"),
+            "delay_days": delay_days,
+        }
+        if any(action.get(key) != value for key, value in verified.items()):
+            return Verdict.modify("Dùng kiện, hãng, tài xế và độ trễ theo tracking", **verified)
 
     return Verdict.allow()
