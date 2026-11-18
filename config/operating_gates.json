@@ -7,18 +7,23 @@
     "roi_min": 0.0
   },
   "operations": {
-    "pic": "",
-    "approver_id": "",
-    "reviewers_on_shift": 1,
-    "review_capacity_per_hour": null,
-    "max_queue_wait_minutes": null,
-    "stop_conditions": [],
-    "alert_channel": "",
+    "pic": "NV-TUNG",
+    "approver_id": "NV-HANH",
+    "reviewers_on_shift": 2,
+    "review_capacity_per_hour": 12,
+    "max_queue_wait_minutes": 60,
+    "stop_conditions": [
+      "Khi có 1 khoản hoàn sai thì NV-TUNG tắt issue_refund",
+      "Khi có 1 lỗi ghi oan cho hãng thì NV-TUNG tắt file_carrier_fault",
+      "Khi có 1 lần lộ dữ liệu cá nhân thì NV-TUNG tắt notify_carrier",
+      "Khi có ca chờ người duyệt từ 60 phút hoặc có ca bị ùn thì NV-TUNG thu hẹp business.pilot_scope"
+    ],
+    "alert_channel": "kênh chat vận hành pilot (#refund-pilot-ops)",
     "decision_note": false,
     "review_sampling_pct": 0
   },
   "legal": {
-    "pii_fields_blocked_to_third_party": [],
-    "carrier_fault_requires_recorded_cause": false
+    "pii_fields_blocked_to_third_party": ["recipient_contact", "customer_note"],
+    "carrier_fault_requires_recorded_cause": true
   }
 }

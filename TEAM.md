@@ -2,9 +2,9 @@
 
 ## Thông tin nhóm
 
-- Tên nhóm (`TenNhom`, không dấu, không khoảng trắng):
-- Lớp: `L3A` / `L3B`
-- Repo của bàn: `K5-<L3A|L3B>-DAY10-<TenNhom>-PoCtoPilotGate1`
+- Tên nhóm (`TenNhom`, không dấu, không khoảng trắng):Ubuntu
+- Lớp: `L3A` 
+- Repo của bàn: cuongdc03/K5-L3A-DAY10-Ubuntu-PoCtoPilotGate1
 - Thẻ sự cố đã bốc (S1–S8):
 
 ## Thành viên
@@ -16,7 +16,7 @@ Họ tên đầy đủ và MSSV của **mọi** thành viên; thêm dòng nếu 
 | 1   | Đỗ Cao Cường | 2A202603612 | D   | x           |
 | 2   | Kiệt         |             | B   |             |
 | 3   | Trịnh Công Đức| 2A202603527| C   |             |
-| 4   | Đạt          |             | A   |             |
+| 4   | Nguyễn Minh Đạt | 2A202603582 | A   |             |
 
 Ghi `members` trong `submission/submission.json` theo dạng `"HoVaTen-MSSV"`, khớp bảng trên.
 
@@ -24,12 +24,12 @@ Ghi `members` trong `submission/submission.json` theo dạng `"HoVaTen-MSSV"`, k
 
 Điền tên vào cột "Người" rồi chép vai sang cột "Vai" của bảng thành viên. Quyết định v1 và v2 do **cả bàn** chốt.
 
-| Mã | Vai | Người | File / phiếu chính |
-| -- | --- | ----- | ------------------ |
-| A | Kỹ sư cổng #1 (viết code) | | `lab10/guards.py` (`pre_guard`, `write_gate`) |
-| B | Kỹ sư cổng #2 (đo và kiểm) | | `lab10/monitors.py`; chạy `eval`, `gate`, `trace`, `grade` |
-| C | Sản phẩm và kinh doanh | | `config/acceptance_criteria.json`; `operating_gates.json` mục `business`; Phiếu A |
-| D | Vận hành và pháp lý (**trưởng nhóm**) | | `operating_gates.json` mục `operations`, `legal`; `submission/submission.json`; repo và git |
+| Mã  | Vai                                   | Người        | File / phiếu chính                                                                          |
+| --- | ------------------------------------- | ------------ | ------------------------------------------------------------------------------------------- |
+| A   | Kỹ sư cổng #1 (viết code)             | Đạt          | `lab10/guards.py` (`pre_guard`, `write_gate`)                                               |
+| B   | Kỹ sư cổng #2 (đo và kiểm)            | Kiệt         | `lab10/monitors.py`; chạy `eval`, `gate`, `trace`, `grade`                                  |
+| C   | Sản phẩm và kinh doanh                | Đức          | `config/acceptance_criteria.json`; `operating_gates.json` mục `business`; Phiếu A           |
+| D   | Vận hành và pháp lý (**trưởng nhóm**) | Đỗ Cao Cường | `operating_gates.json` mục `operations`, `legal`; `submission/submission.json`; repo và git |
 
 **Quy tắc git:** chỉ D push các commit quan trọng (ký tiêu chí, chốt vòng 1, nộp bài). Mỗi người chỉ sửa file của mình; trước khi push chạy `git pull --rebase`.
 
@@ -41,7 +41,7 @@ Ghi `members` trong `submission/submission.json` theo dạng `"HoVaTen-MSSV"`, k
 
 ### Phút 15–65 · Khối 1: tiêu chí rồi ký · Phiếu A
 
-> **Chưa ai chạy `eval`.** Lệnh sẽ từ chối, và ngưỡng phải viết khi chưa biết kết quả.
+> **Chưa ai chạy** `eval`**.** Lệnh sẽ từ chối, và ngưỡng phải viết khi chưa biết kết quả.
 
 - **C:** câu 1.1, 1.6; điền `acceptance_criteria.json` (`team` = đúng tên repo, `signed_by`, 5 ngưỡng bắt buộc, `escalation_rate_max`, `business_ops`, `stop_condition`, 4 dòng `decision_rule`); hai câu ranh giới đầu ra. Bám `data/world.json` → `ops_limits`, `ops_facts`; không chép từ file example.
 - **D:** câu 1.2 (chị Oanh, chị Hạnh) và 1.4 (telemetry production).
@@ -53,6 +53,7 @@ Ghi `members` trong `submission/submission.json` theo dạng `"HoVaTen-MSSV"`, k
 ### Phút 65–115 · Khối 2: đo, rủi ro, cổng vòng 1 · Phiếu B
 
 **65–85 (chưa sửa code/config):**
+
 - **B:** câu 2.1 (`eval` base, `gate`, ghi mã lần chạy) và 2.2 (`trace` `T-002@55`, bảng soát lỗi).
 - **C:** câu 2.3 (bản đồ dữ liệu, một ví dụ drift).
 - **D:** câu 2.4 (HAZOP ≥ 3 dòng + ≥ 2 dòng ngoài kỹ thuật; checklist 9 nhóm, mỗi dòng một PIC có tên).
@@ -60,12 +61,14 @@ Ghi `members` trong `submission/submission.json` theo dạng `"HoVaTen-MSSV"`, k
 - **Cả bàn:** câu 2.5 (pre-mortem 4 lăng kính; đánh dấu 2–3 lý do thành cổng).
 
 **85–105:**
+
 - **A:** câu 2.6, viết 2–3 cổng dựa trên quy tắc (trần hoàn theo khách và ngày, giới hạn số lần ghi lỗi mỗi hãng, chặn PII gửi bên thứ ba, ghi lỗi phải có nguyên nhân). Không xử lý theo mã ticket hay câu chữ cụ thể.
 - **B:** câu 2.7 (hai bước tránh rò rỉ dữ liệu), 2.8 (behavioral test và 2 ticket hiểm); chạy `eval` stage `after` và `unittest` để soi hồi quy cho A.
 - **C:** câu 2.9, điền mục `business`, mỗi số kèm một câu lý do từ `world.json`.
 - **D:** câu 2.10, điền mục `operations` và `legal`; runbook phần 1–3 và mục Giờ cao điểm khớp các con số đó; `operations.pic` không được để trống.
 
 **105–115:**
+
 - **D:** `python3 -m lab10.checkpoint`, rồi commit và push.
 - **B:** `eval --stage prepared`, `gate --run ...`.
 - **C:** điền cột v1 ở B8 (một quyết định, ba bằng chứng có mã lần chạy, dòng `decision_rule`, ngày quyết định lại). **Cả bàn** chốt.
@@ -115,3 +118,24 @@ Các phần đã điền ở Phiếu A, Phiếu B và hai config; chưa có mã 
 ### Exit ticket
 
 Học được rằng phải chốt tiêu chí trước khi đo, và mỗi ngưỡng kinh doanh cần gắn với một hành động/quyết định. Còn cần kiểm chứng trong report liệu phạm vi HN/HCM, tỷ lệ chuyển người và ROI có khả thi khi tính cả chi phí vận hành hay không.
+
+
+## NguyenMinhDat-2A202603582
+
+### Phần việc phụ trách
+
+Vai A – Kỹ sư cổng #1. Phụ trách câu 2.6, mục B7.1 của Phiếu B và các mục C6, C7, C9 của Phiếu C.
+
+### Đóng góp cụ thể
+
+Ở vòng 1, viết ba cổng trong `lab10/guards.py`: chặn ghi hoàn trùng, kiểm tra căn cứ ghi lỗi hãng và tính lại quyền lợi hoàn tiền theo tracking và chính sách hiệu lực. Cập nhật mô tả và kết quả kiểm thử ở B7.1.
+
+### Bằng chứng
+
+- Commit `a57d40a` trên nhánh `dat/vai-a-vong-1`.
+- 13 test công khai đạt.
+- Lần chạy `R-base-after-20261118-151055-60da30` đạt 65/65 lượt trong phạm vi pilot, với 0đ hoàn sai và 0 lỗi hãng oan.
+
+### Exit ticket
+
+Tôi học được cách kiểm tra quyền lợi từ tracking và chính sách trước khi ghi hoàn tiền. Tôi còn muốn kiểm tra cổng sẽ xử lý thế nào khi chính dữ liệu tracking bị thiếu hoặc cập nhật trễ.
