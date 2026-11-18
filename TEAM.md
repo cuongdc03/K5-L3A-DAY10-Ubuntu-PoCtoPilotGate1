@@ -150,18 +150,19 @@ Học được rằng phải chốt tiêu chí trước khi đo, và mỗi ngư�
 
 ### Phần việc phụ trách
 
-Vai A – Kỹ sư cổng #1. Phụ trách câu 2.6, mục B7.1 của Phiếu B và các mục C6, C7, C9 của Phiếu C.
+Vai A – Kỹ sư cổng #1. Phụ trách `lab10/guards.py`, câu 2.6 (B7.1) của Phiếu B và các mục C6, C7, C9 của Phiếu C.
 
 ### Đóng góp cụ thể
 
-Ở vòng 1, viết ba cổng trong `lab10/guards.py`: chặn ghi hoàn trùng, kiểm tra căn cứ ghi lỗi hãng và tính lại quyền lợi hoàn tiền theo tracking và chính sách hiệu lực. Cập nhật mô tả và kết quả kiểm thử ở B7.1.
+- **Vòng 1:** Viết ba cổng để chặn ghi hoàn trùng, kiểm tra căn cứ ghi lỗi hãng và tính lại quyền lợi hoàn tiền từ tracking theo chính sách hiệu lực. Ghi mô tả và kết quả kiểm thử vào B7.1.
+- **Vòng 2 – S6:** Sửa `write_gate` để ghi lỗi đúng kiện, hãng và tài xế theo tracking. Chuyển người duyệt trước khi hoàn tiền nếu nhiều kiện trễ mà ticket thiếu mã kiện, và chuyển duyệt khi hãng đã chạm trần ghi lỗi tự động trong ngày. Điền cây lỗi trước sửa, bảng biện pháp và cây lỗi sau sửa ở C6, C7, C9.
+- **Sử dụng AI:** Dùng ChatGPT để đọc repo, hỗ trợ viết code cổng, giải thích kết quả. Tôi trực tiếp chạy các lệnh kiểm thử và đánh giá.
 
 ### Bằng chứng
 
-- Commit `a57d40a` trên nhánh `dat/vai-a-vong-1`.
-- 13 test công khai đạt.
-- Lần chạy `R-base-after-20261118-151055-60da30` đạt 65/65 lượt trong phạm vi pilot, với 0đ hoàn sai và 0 lỗi hãng oan.
+- **Vòng 1:** Commit `a57d40a`. Qua 13 test công khai. Lần chạy `R-base-after-20261118-151055-60da30` đạt 65/65 lượt trong phạm vi pilot, với 0đ hoàn sai và 0 lỗi hãng oan.
+- **Vòng 2:** Commit `1d7e5d3`. Qua 13 test công khai. Lần chạy S6 `R-S6-after-20261118-164735-172ce1` đạt 40/40 lượt trong phạm vi pilot, với 0đ hoàn sai và 0 lỗi hãng oan. Lần chạy hồi quy `R-base-after-20261118-164846-172ce1` đạt 65/65 lượt trong phạm vi pilot, không phát sinh ca hỏng.
 
 ### Exit ticket
 
-Tôi học được cách kiểm tra quyền lợi từ tracking và chính sách trước khi ghi hoàn tiền. Tôi còn muốn kiểm tra cổng sẽ xử lý thế nào khi chính dữ liệu tracking bị thiếu hoặc cập nhật trễ.
+Học được rằng ticket thiếu mã kiện cần được chuyển duyệt trước khi ghi hoàn tiền. Muốn kiểm tra cách hệ thống áp dụng trần ghi lỗi khi nhiều tiến trình cùng ghi cho một hãng.

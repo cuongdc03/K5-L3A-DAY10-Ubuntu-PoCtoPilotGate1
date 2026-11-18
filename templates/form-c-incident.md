@@ -1,6 +1,6 @@
 # Phiếu C · Sự cố và quyết định v2 · Khối 3 (phút 125–200)
 
-**Bàn:** ______ · **Thẻ đã bốc:** S6
+**Bàn:** Ubuntu · **Thẻ đã bốc:** S6 *(để trống tới phút 125; bốc số xong thì ghi đúng số đó, ví dụ `S3`. Lab Coach đối chiếu với sổ; lệnh tự kiểm tra in dòng này trong report.)*
 
 Mở `incidents/Sx/card.md` của đúng số đã bốc. Các bước trên thẻ trỏ về đúng mục trong phiếu này. Mục C3 chỉ điền phần ứng với
 số thẻ của bàn; các phần khác để trống.
@@ -273,7 +273,31 @@ Vì sao có thể sai: …
 
 <a id="c6"></a>
 
-## C6 · Câu 3.4 · Fault tree TRƯỚC khi sửa (mã lần chạy: `__________`)
+## C6 · Câu 3.4 · Fault tree TRƯỚC khi sửa (mã lần chạy: `R-S6-prepared-20261118-164521-9eec46`)
+
+```
+[ĐỈNH] Tài xế bị trừ thưởng vì lỗi giao trễ bị quy sai hoặc ghi hàng loạt.
+        Số lỗi ghi oan trong báo cáo: base 40, prepared 5.
+ └─ HOẶC
+    ├─ [1] Tầng hành động: agent đề xuất ghi hãng của kiện đầu đơn.
+    │   S6-01@11: kiện P1 của GHSH trễ 0 ngày, P2 của VNX trễ 4 ngày.
+    │   Cổng cũ bỏ lệnh ghi khi lệch kiện, khiến lỗi hợp lệ cũng bị bỏ.
+    ├─ [2] Tầng dữ liệu: thiếu parcel_id nhưng nhiều kiện đều trễ.
+    │   S6-20@11: GHSH trễ 3 ngày, VNX trễ 5 ngày. S6-21@11: hai hãng
+    │   cùng trễ 4 ngày. Cả hai ca đã hoàn tiền trước khi giải quyết sự mơ hồ.
+    └─ [3] Tầng vận hành: nhiều lệnh ghi dồn vào cùng hãng trong ngày.
+        Loạt S6-40–43 dùng cùng ngày giả lập; trần từ ops_limits là 2.
+        Hai ca đầu có căn cứ; lỗi từ ca thứ ba cần người duyệt.
+```
+
+| Lá | Specification bị vi phạm | Giả định môi trường đã sai |
+|---|---|---|
+| [1] | Ghi đúng kiện, hãng và tài xế theo tracking. | Một đơn luôn do cùng hãng giao. |
+| [2] | Chuyển duyệt trước khi ghi nếu nhiều kiện trễ và thiếu mã kiện. | Mọi ticket đều cho phép xác định duy nhất kiện đang khiếu nại. |
+| [3] | Lỗi vượt trần tự động của hãng trong ngày phải chuyển duyệt. | Ticket đến rời rạc nên không thể vượt trần trong cùng ngày. |
+
+Lần tự kiểm tra trước sửa báo hash bản chốt lệch trên máy Windows. Các trace trên là bằng chứng từ dữ liệu đã chạy; trạng thái toàn vẹn được kiểm lại riêng.
+
 
 **Khung tư duy.** Đi từ **tác hại** ngược về nguyên nhân, không đi từ lỗi mình tình cờ thấy. Mỗi tầng hỏi "điều gì phải xảy
 ra thì điều trên mới xảy ra", nối bằng **HOẶC** (một trong các nhánh là đủ) hoặc **VÀ** (phải đồng thời). Một biện pháp tốt
@@ -325,9 +349,9 @@ python3 -m lab10.grade --incident Sx
 
 | Nhánh fault tree | Nguyên nhân | Chỗ sửa (hàm + nhánh trong `guards.py`, hoặc khoá trong `operating_gates.json`) | Tầng (phát hiện / chặn / giới hạn thiệt hại / vận hành) | GIẢM khả năng hay NGĂN hẳn? Vì sao | Mã lần chạy sau khi sửa |
 |---|---|---|---|---|---|
-| [1] | | | | | |
-| [2] | | | | | |
-| [3] | | | | | |
+| [1] | Agent chọn hãng của kiện đầu đơn | `write_gate` / `file_carrier_fault` đối chiếu kiện, hãng, tài xế, độ trễ và căn cứ trong tracking | Chặn và sửa tham số | Ngăn ghi nhầm khi tracking đúng. Với kiện xác định rõ và đủ căn cứ, sửa tham số để vẫn ghi được lỗi hợp lệ. | `R-S6-after-20261118-164735-172ce1` |
+| [2] | Thiếu mã kiện và nhiều kiện đều trễ | `write_gate` / `issue_refund` và `file_carrier_fault` chuyển duyệt khi có nhiều kiện trễ nhưng thiếu mã kiện | Chặn trước khi ghi | Ngăn trợ lý tự hoàn hoặc tự quy lỗi khi chưa xác định được kiện. Người duyệt xác minh hồ sơ. | `R-S6-after-20261118-164735-172ce1` |
+| [3] | Nhiều yêu cầu ghi lỗi cùng hãng trong ngày | `write_gate` / `file_carrier_fault` đếm lỗi đã ghi cho hãng trong ngày theo `fault_rows` và đọc trần từ `ops_limits` | Giới hạn thiệt hại | Ngăn lỗi tự động thứ ba khi trần là 2. Các ca vượt trần chuyển duyệt, nên tác hại tổng thể còn phụ thuộc quyết định của người duyệt. | `R-S6-after-20261118-164735-172ce1` |
 
 ---
 
@@ -353,23 +377,26 @@ Thẻ S5 dùng mục này cho một con số kinh doanh: chi phí mỗi ticket t
 
 <a id="c9"></a>
 
-## C9 · Câu 3.7 · Fault tree SAU khi sửa (mã lần chạy: `__________`)
+## C9 · Câu 3.7 · Fault tree SAU khi sửa (mã lần chạy: `R-S6-after-20261118-164735-172ce1`)
 
 Vẽ lại cây ở C6. Ở mỗi nhánh đã xử lý, thêm một nút `VÀ [gate … hỏng]` và ghi:
 
 ```
-[ĐỈNH] ______________________________
+[ĐỈNH] Tài xế bị trừ thưởng do lỗi quy sai hoặc ghi dồn hàng loạt.
  └─ HOẶC
- ├─ [1] ______________ VÀ [gate ______ hỏng]
- ├─ [2] ______________ VÀ [gate ______ hỏng]
- └─ [3] ______________ (còn hở?)
+    ├─ [1] Agent chọn sai kiện VÀ cổng đối chiếu hoặc nguồn tracking sai.
+    ├─ [2] Nhiều kiện trễ, thiếu mã kiện VÀ cổng chuyển duyệt trước ghi hỏng.
+    └─ [3] Hãng đã đạt trần VÀ cổng đếm lỗi theo hãng trong ngày hỏng,
+            hoặc người duyệt chấp nhận một lỗi thiếu căn cứ.
 ```
 
 | Nhánh | Gate (hàm trong `guards.py` / khoá config / metric trong `monitors.py`) | Tầng gate (phát hiện / chặn / giới hạn thiệt hại / vận hành) | Giảm hay ngăn? Vì sao | Nhánh còn hở |
 |---|---|---|---|---|
-| [1] | | | | |
-| [2] | | | | |
-| [3] | | | | |
+| [1] | `write_gate` đối chiếu kiện, hãng và tài xế | Chặn | Ngăn ghi nhầm theo đề xuất nếu tracking đúng | Tracking có thể gán sai hãng hoặc tài xế |
+| [2] | `write_gate` yêu cầu duyệt khi thiếu mã kiện | Chặn | Ngăn ghi tự động khi nhiều kiện trễ và chưa phân biệt được | Người duyệt vẫn cần xác minh; chờ lâu khi tải tăng |
+| [3] | `write_gate` đọc trần và đếm lỗi theo hãng | Giới hạn thiệt hại | Ngăn ghi tự động vượt trần trong ngày giả lập | Hệ thật cần đếm đồng nhất khi nhiều tiến trình ghi đồng thời; lỗi do người duyệt vẫn có thể xảy ra |
+
+Kết quả S6 trong phạm vi pilot: 40/40 lượt đạt, 0 lỗi ghi oan, 0đ hoàn sai. Độ phủ 8/12 ticket mỗi ngày giả lập. Tỉ lệ chuyển duyệt 25%, 0 ca ùn và ROI 0,45. Bộ nền chạy hồi quy `R-base-after-20261118-164846-172ce1`: 65/65 lượt trong phạm vi đạt, không phát sinh ca hỏng.
 
 ---
 
